@@ -30,13 +30,13 @@
   <div class="profile-card">
     <div class="avatar"></div>
     <div class="profile-info">
-      <h2 class="username" id="usernameDisplay">YourName</h2>
+      <h2 class="username" id="usernameDisplay">Loading...</h2>
 
       <div class="level-bar">
         <div class="bar-fill" id="xpBar"></div>
       </div>
 
-      <p class="level-text" id="levelDisplay">Level 1</p>
+      <p class="level-text" id="levelDisplay">Level 0</p>
     </div>
 
     <div class="profile-actions">
@@ -91,11 +91,11 @@
 
 </div>
 
-<!-- 🔥 GOLDEN FIREBASE USER LOADER -->
+
+<!-- GOLDEN USER LOADER (NO FIREBASE AUTH, WORKS WITH YOUR SYSTEM) -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+  import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
@@ -109,45 +109,55 @@
   };
 
   const app = initializeApp(firebaseConfig);
-  const auth = getAuth();
-  const db = getDatabase();
+  const db = getDatabase(app);
 
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      document.getElementById("usernameDisplay").textContent = "Not Logged In";
+  // Load logged-in username from localStorage
+  const currentUser = localStorage.getItem("goldetCurrentUser");
+
+  if (!currentUser) {
+    document.getElementById("usernameDisplay").textContent = "Not Logged In";
+  } else {
+    loadUserStats(currentUser);
+  }
+
+  async function loadUserStats(username) {
+    const snap = await get(ref(db, "users/" + username));
+    const data = snap.val();
+
+    if (!data) {
+      document.getElementById("usernameDisplay").textContent = username + " (No Data)";
       return;
     }
 
-    const uid = user.uid;
-    const userRef = ref(db, "users/" + uid);
+    // Username
+    document.getElementById("usernameDisplay").textContent = username;
 
-    onValue(userRef, (snap) => {
-      const data = snap.val();
-      if (!data) return;
+    // Level + XP
+    document.getElementById("levelDisplay").textContent =
+      "Level " + (data.level ?? 1);
 
-      // Replace “YourName”
-      document.getElementById("usernameDisplay").textContent = data.username ?? "Unknown";
+    // XP bar (if stored)
+    let xp = data.xp ?? 0;
+    document.getElementById("xpBar").style.width = xp + "%";
 
-      // Level
-      document.getElementById("levelDisplay").textContent = "Level " + (data.level ?? 1);
+    // Tokens
+    document.getElementById("tokensDisplay").textContent =
+      data.tokens ?? 0;
 
-      // XP bar (0–100%)
-      document.getElementById("xpBar").style.width = (data.xp ?? 0) + "%";
+    // Blocks
+    let unlocked = data.blocksUnlocked ?? 0;
+    let total = data.totalBlocks ?? 0;
+    document.getElementById("blocksDisplay").textContent =
+      unlocked + " / " + total;
 
-      // Tokens
-      document.getElementById("tokensDisplay").textContent = data.tokens ?? 0;
+    // Packs opened
+    document.getElementById("packsDisplay").textContent =
+      data.packsOpened ?? 0;
 
-      // Blocks
-      document.getElementById("blocksDisplay").textContent =
-        (data.blocksUnlocked ?? 0) + " / " + (data.totalBlocks ?? 0);
-
-      // Packs opened
-      document.getElementById("packsDisplay").textContent = data.packsOpened ?? 0;
-
-      // Messages sent
-      document.getElementById("messagesDisplay").textContent = data.messages ?? 0;
-    });
-  });
+    // Messages sent
+    document.getElementById("messagesDisplay").textContent =
+      data.messages ?? 0;
+  }
 </script>
 
 </body>
