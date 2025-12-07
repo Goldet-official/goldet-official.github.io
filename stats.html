@@ -49,22 +49,22 @@
   <div class="stats-row">
     <div class="stat-box">
       <p class="stat-title">Tokens</p>
-      <p class="stat-value" id="tokensDisplay">0</p>
+      <p class="stat-value" id="tokens">0</p>
     </div>
 
     <div class="stat-box">
-      <p class="stat-title">Blocks Unlocked</p>
-      <p class="stat-value" id="blocksDisplay">0 / 0</p>
+      <p class="stat-title">Golds Unlocked</p>
+      <p class="stat-value" id="golds">0 / 0</p>
     </div>
 
     <div class="stat-box">
       <p class="stat-title">Packs Opened</p>
-      <p class="stat-value" id="packsDisplay">0</p>
+      <p class="stat-value" id="packs">0</p>
     </div>
 
     <div class="stat-box">
       <p class="stat-title">Messages Sent</p>
-      <p class="stat-value" id="messagesDisplay">0</p>
+      <p class="stat-value" id="messages">0</p>
     </div>
   </div>
 
@@ -95,69 +95,75 @@
 <!-- GOLDEN USER LOADER (NO FIREBASE AUTH, WORKS WITH YOUR SYSTEM) -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-  import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
-    authDomain: "goldet-504aa.firebaseapp.com",
-    databaseURL: "https://goldet-504aa-default-rtdb.firebaseio.com",
-    projectId: "goldet-504aa",
-    storageBucket: "goldet-504aa.firebasestorage.app",
-    messagingSenderId: "36312610816",
-    appId: "1:36312610816:web:ded0576d78ebf1ceba00e5",
-    measurementId: "G-TTJNTC824V"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
+  authDomain: "goldet-504aa.firebaseapp.com",
+  databaseURL: "https://goldet-504aa-default-rtdb.firebaseio.com",
+  projectId: "goldet-504aa",
+  storageBucket: "goldet-504aa.firebasestorage.app",
+  messagingSenderId: "36312610816",
+  appId: "1:36312610816:web:ded0576d78ebf1ceba00e5",
+  measurementId: "G-TTJNTC824V"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-  // Load logged-in username from localStorage
-  const currentUser = localStorage.getItem("goldetCurrentUser");
+// Load current user from localStorage
+const username = localStorage.getItem("goldetCurrentUser");
 
-  if (!currentUser) {
-    document.getElementById("usernameDisplay").textContent = "Not Logged In";
-  } else {
-    loadUserStats(currentUser);
+// If not logged in, kick out
+if (!username) {
+  window.location.href = "login.html";
+}
+
+// Update username on page
+document.querySelector(".username").textContent = username;
+
+// Load user stats
+async function loadStats() {
+  const snap = await get(ref(db, `users/${username}`));
+
+  if (!snap.exists()) {
+    console.log("⚠ No user record yet. Creating default stats.");
+
+    // default stats (for new users)
+    return set(ref(db, `users/${username}`), {
+      level: 1,
+      xp: 0,
+      golds: 0,
+      packsOpened: 0,
+      messages: 0,
+      friends: 0
+    });
   }
 
-  async function loadUserStats(username) {
-    const snap = await get(ref(db, "users/" + username));
-    const data = snap.val();
+  const data = snap.val();
 
-    if (!data) {
-      document.getElementById("usernameDisplay").textContent = username + " (No Data)";
-      return;
-    }
+  // Update values on screen
+  document.querySelector(".stat-value.tokens").textContent =
+    data.golds ?? 0;
 
-    // Username
-    document.getElementById("usernameDisplay").textContent = username;
+  document.querySelector(".stat-value.golds").textContent =
+    (data.blocksUnlocked ?? 0) + " / ???";
 
-    // Level + XP
-    document.getElementById("levelDisplay").textContent =
-      "Level " + (data.level ?? 1);
+  document.querySelector(".stat-value.packs").textContent =
+    data.packsOpened ?? 0;
 
-    // XP bar (if stored)
-    let xp = data.xp ?? 0;
-    document.getElementById("xpBar").style.width = xp + "%";
+  document.querySelector(".stat-value.messages").textContent =
+    data.messages ?? 0;
 
-    // Tokens
-    document.getElementById("tokensDisplay").textContent =
-      data.tokens ?? 0;
+  document.querySelector(".level-text").textContent =
+    "Level " + (data.level ?? 1);
 
-    // Blocks
-    let unlocked = data.blocksUnlocked ?? 0;
-    let total = data.totalBlocks ?? 0;
-    document.getElementById("blocksDisplay").textContent =
-      unlocked + " / " + total;
+  // XP progress bar
+  const progress = Math.min(100, Math.floor((data.xp ?? 0) % 100));
+  document.querySelector(".bar-fill").style.width = progress + "%";
+}
 
-    // Packs opened
-    document.getElementById("packsDisplay").textContent =
-      data.packsOpened ?? 0;
-
-    // Messages sent
-    document.getElementById("messagesDisplay").textContent =
-      data.messages ?? 0;
-  }
+loadStats();
 </script>
 
 </body>
