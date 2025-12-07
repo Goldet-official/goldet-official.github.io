@@ -167,7 +167,7 @@
 
       const hashedPassword = await hashPassword(password);
 
-      const userRef = db.ref("goldetForms/" + username);
+      const userRef = db.ref("forms/" + username);
       const snapshot = await userRef.get();
 
       if (snapshot.exists()) {
@@ -192,7 +192,7 @@
     }
 
     function listenForApproval(username, hashedPassword) {
-      const statusRef = db.ref("goldetForms/" + username + "/status");
+      const statusRef = db.ref("forms/" + username + "/status");
 
       statusRef.on("value", (snapshot) => {
         const status = snapshot.val();
