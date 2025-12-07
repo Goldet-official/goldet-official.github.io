@@ -1,187 +1,106 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Login | Goldet</title>
-
-  <style>
-    body {
-      background: linear-gradient(to bottom right, #f7c948, #b8860b);
-      font-family: Arial, sans-serif;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-    }
-
-    form {
-      background: #1e1a12;
-      padding: 25px 30px;
-      border-radius: 18px;
-      box-shadow: 0 0 20px #ffdd57;
-      width: 330px;
-      display: flex;
-      flex-direction: column;
-      border: 2px solid #d4af37;
-    }
-
-    h1 {
-      font-family: 'Titan One', cursive;
-      text-align: center;
-      margin-bottom: 20px;
-      color: #ffd700;
-      text-shadow: 0 0 10px #d4af37;
-    }
-
-    input {
-      padding: 11px;
-      margin-bottom: 15px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      outline: none;
-    }
-
-    button {
-      background: #ffd700;
-      color: black;
-      border: none;
-      padding: 12px;
-      font-family: 'Titan One', cursive;
-      font-size: 18px;
-      cursor: pointer;
-      border-radius: 10px;
-      font-weight: bold;
-      transition: 0.3s ease;
-      box-shadow: 0 0 10px #e8c547;
-    }
-
-    button:hover {
-      background: #b8860b;
-      color: white;
-      box-shadow: 0 0 15px #ffec8b;
-    }
-
-    .error {
-      background: #ff5c5c;
-      padding: 10px;
-      border-radius: 8px;
-      margin-bottom: 15px;
-      text-align: center;
-      font-weight: bold;
-      display: none;
-      border: 1px solid #ffaaaa;
-    }
-
-    .show-pass {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 14px;
-      margin-bottom: 15px;
-      cursor: pointer;
-      color: #ffeaa7;
-    }
-  </style>
-
-  <link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet" />
-
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Login | Goldet</title>
+<link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet" />
+<style>
+  body{margin:0;background:linear-gradient(180deg,#000,#0b0b0b);color:#ffd;font-family:Arial,system-ui}
+  .wrap{max-width:420px;margin:60px auto;padding:20px}
+  .card{background:#0f0f0f;border:2px solid rgba(212,175,55,0.12);padding:18px;border-radius:12px}
+  h1{font-family:'Titan One',cursive;color:#ffd700;margin:0 0 10px}
+  input{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:#121212;color:#ffd;margin-top:10px}
+  button{margin-top:14px;padding:12px;border-radius:10px;border:none;background:linear-gradient(90deg,#ffd700,#b8860b);color:#070707;font-weight:700;cursor:pointer}
+  .alert{margin-top:12px;padding:10px;border-radius:8px;display:none}
+</style>
 </head>
 <body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Goldet Login</h1>
 
-  <form id="login-form" autocomplete="off">
-    <h1>Goldet Login</h1>
-    <div id="error-msg" class="error"></div>
-    <input type="text" id="username" placeholder="Enter username" required />
-    <input type="password" id="password" placeholder="Enter password" required />
-    <label class="show-pass">
-      <input type="checkbox" id="togglePass"> Show Password
-    </label>
-    <button type="submit">Log In</button>
-  </form>
+      <input id="username" placeholder="Username" autocomplete="off">
+      <input id="password" type="password" placeholder="Password">
 
-  <script>
-    // 🔧 Firebase Config (replace with your new Goldet config)
-    const firebaseConfig = {
-      apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
-      authDomain: "goldet-504aa.firebaseapp.com",
-      databaseURL: "https://goldet-504aa-default-rtdb.firebaseio.com",
-      projectId: "goldet-504aa",
-      storageBucket: "goldet-504aa.firebasestorage.app",
-      messagingSenderId: "36312610816",
-      appId: "1:36312610816:web:ded0576d78ebf1ceba00e5",
-      measurementId: "G-TTJNTC824V"
+      <button id="loginBtn">Log in</button>
+
+      <div id="alertBox" class="alert"></div>
+      <p style="margin-top:12px;font-size:14px;color:#d9c08c">No account? <a href="signup.html" style="color:#ffd700">Signup</a> — admins will approve.</p>
+    </div>
+  </div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+  import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
+    authDomain: "goldet-504aa.firebaseapp.com",
+    databaseURL: "https://goldet-504aa-default-rtdb.firebaseio.com",
+    projectId: "goldet-504aa",
+    storageBucket: "goldet-504aa.firebasestorage.app",
+    messagingSenderId: "36312610816",
+    appId: "1:36312610816:web:ded0576d78ebf1ceba00e5",
+    measurementId: "G-TTJNTC824V"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  const usernameEl = document.getElementById("username");
+  const passwordEl = document.getElementById("password");
+  const loginBtn = document.getElementById("loginBtn");
+  const alertBox = document.getElementById("alertBox");
+
+  function showAlert(msg, ok=false){
+    alertBox.style.display = "block";
+    alertBox.style.background = ok ? "rgba(40,180,40,0.12)" : "rgba(255,0,0,0.12)";
+    alertBox.textContent = msg;
+    setTimeout(()=> alertBox.style.display = "none", 4000);
+  }
+
+  async function hashPassword(pw){
+    const buf = new TextEncoder().encode(pw);
+    const digest = await crypto.subtle.digest("SHA-256", buf);
+    return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  // fetch object from Realtime DB path
+  async function dbGet(path){
+    const snap = await get(ref(db, path));
+    return snap.exists() ? snap.val() : null;
+  }
+
+  loginBtn.addEventListener("click", async () => {
+    const username = usernameEl.value.trim();
+    const password = passwordEl.value;
+    if (!username || !password) return showAlert("Enter username and password.");
+
+    // fetch form entry
+    const form = await dbGet(`forms/${username}`);
+    if (!form) return showAlert("Account not found. Did you signup?");
+
+    if (form.status !== "approved") return showAlert("Account not approved yet. Wait for admin.");
+
+    const hashed = await hashPassword(password);
+    if (form.password !== hashed) return showAlert("Incorrect password.");
+
+    // success: load user record if exists
+    const userData = await dbGet(`users/${username}`) || {};
+
+    // Ensure local storage structure for other pages
+    const store = JSON.parse(localStorage.getItem("goldetStorage") || "{}");
+    store[username] = {
+      ...userData,
+      password: form.password // keep hash only (not plaintext)
     };
+    localStorage.setItem("goldetStorage", JSON.stringify(store));
+    localStorage.setItem("goldetCurrentUser", username);
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    const form = document.getElementById("login-form");
-    const errorMsg = document.getElementById("error-msg");
-    const togglePass = document.getElementById("togglePass");
-
-    const adminUsername = "YourUsernameHere"; // Replace with your admin account
-
-    // show/hide pass
-    togglePass.addEventListener("change", () => {
-      const pass = document.getElementById("password");
-      pass.type = togglePass.checked ? "text" : "password";
-    });
-
-    form.addEventListener("submit", async e => {
-      e.preventDefault();
-      errorMsg.style.display = "none";
-
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value;
-
-      if (!username || !password) {
-        return showError("Please fill out all fields.");
-      }
-
-      const users = JSON.parse(localStorage.getItem("goldetStorage") || "{}");
-
-      if (!users[username]) {
-        return showError("User not found.");
-      }
-
-      if (users[username].password !== password) {
-        return showError("Incorrect password.");
-      }
-
-      try {
-        const snap = await db.ref("forms/" + username).get();
-        if (!snap.exists()) return showError("Account not found on server.");
-
-        const data = snap.val();
-
-        if (username !== adminUsername && data.status !== "approved" && data.status !== "accepted") {
-          return showError("Your account has not been approved yet.");
-        }
-
-        localStorage.setItem("goldetCurrentUser", username);
-
-        alert("Login successful! Redirecting...");
-        window.location.href = "stats.html";
-
-      } catch (err) {
-        console.error(err);
-        showError("Error logging in.");
-      }
-    });
-
-    function showError(msg) {
-      errorMsg.textContent = msg;
-      errorMsg.style.display = "block";
-    }
-  </script>
-
+    showAlert("Login successful — redirecting...", true);
+    setTimeout(()=> window.location.href = "stats.html", 900);
+  });
+</script>
 </body>
 </html>
