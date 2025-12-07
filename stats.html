@@ -133,7 +133,7 @@ async function loadStats() {
     return set(ref(db, `users/${username}`), {
       level: 1,
       xp: 0,
-      golds: 0,
+      goldsUnlocked: 0,
       packsOpened: 0,
       messages: 0,
       friends: 0
@@ -144,10 +144,10 @@ async function loadStats() {
 
   // Update values on screen
   document.querySelector(".stat-value.tokens").textContent =
-    data.golds ?? 0;
+    data.tokens ?? 0;
 
   document.querySelector(".stat-value.golds").textContent =
-    (data.blocksUnlocked ?? 0) + " / ???";
+    (data.goldsUnlocked ?? 0) + " / ???";
 
   document.querySelector(".stat-value.packs").textContent =
     data.packsOpened ?? 0;
