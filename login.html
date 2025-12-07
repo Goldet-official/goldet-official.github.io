@@ -79,7 +79,7 @@
 
     // fetch form entry
     const form = await dbGet(`forms/${username}`);
-    if (!form) return showAlert("Account not found. Did you signup?");
+    if (!form) return showAlert("Account not found. Are you sure you registered?");
 
     if (form.status !== "approved") return showAlert("Account not approved yet. Wait for admin.");
 
