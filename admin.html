@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Goldet Admin Panel</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet" />
+<style>
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Arial,system-ui,-apple-system; background:#030303;color:#fff}
+  /* Sidebar */
+  .sidebar{
+    position:fixed;left:0;top:0;bottom:0;width:240px;
+    background: linear-gradient(180deg,#1a1200,#2e1a03);
+    border-right: 2px solid rgba(212,175,55,0.06);
+    padding:22px;display:flex;flex-direction:column;gap:12px;
+  }
+  .logo{font-family:'Titan One',cursive;color:#ffd700;font-size:34px; text-shadow:0 0 8px rgba(212,175,55,0.15)}
+  .nav a{display:block;color:#ffd; text-decoration:none;padding:10px;border-radius:8px;margin:6px 0;background:transparent}
+  .nav a:hover{background:rgba(212,175,55,0.06)}
+  /* Main */
+  .main{margin-left:260px;padding:30px;min-height:100vh;background:linear-gradient(180deg,#050505,#0b0b0b)}
+  h1{font-family:'Titan One',cursive;color:#ffdf80;margin:0 0 12px}
+  label{display:block;margin:8px 0 6px;color:#f6e6b4;font-weight:700}
+  input[type=text], select{
+    width:100%;padding:10px;border-radius:8px;border:1px solid rgba(212,175,55,0.12);
+    background:#0f0f0f;color:#ffefb6;font-size:16px;outline:none;
+  }
+  .buttons-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
+  button{background:linear-gradient(90deg,#ffd700,#b8860b);border:none;padding:12px 14px;border-radius:10px;color:#070707;font-weight:800;cursor:pointer}
+  button.ghost{background:transparent;border:2px solid rgba(212,175,55,0.12);color:#ffd}
+  .alert{padding:12px;border-radius:10px;margin-top:12px;display:none}
+  .request-list{margin-top:10px}
+  .request{background:rgba(255,255,255,0.03);border:1px solid rgba(212,175,55,0.06);padding:12px;margin-bottom:10px;border-radius:8px}
+  .request b{color:#ffd700}
+  .admin-box{background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+  .top-row{display:flex;gap:12px;align-items:center;justify-content:space-between}
+  .small{font-size:13px;color:#d9c08c}
+  .right-actions{display:flex;gap:8px}
+  .hidden{display:none}
+  @media (max-width:900px){
+    .sidebar{position:relative;width:100%;height:auto;display:flex;flex-direction:row;overflow:auto}
+    .main{margin-left:0;padding:16px}
+  }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo">Goldet</div>
+  <nav class="nav">
+    <a href="stats.html">Stats</a>
+    <a href="leaderboard.html">Leaderboard</a>
+    <a href="chat.html">Chat</a>
+    <a href="market.html">Market</a>
+    <a href="golds.html"> Golds</a>
+    <a href="settings.html">Settings</a>
+    <a href="#" id="sign-out-link" class="hidden">Logout</a>
+  </nav>
+</div>
+
+<div class="main">
+  <div class="top-row">
+    <div>
+      <h1>Admin Panel — Account Requests</h1>
+      <div class="small">Approve or decline pending signups, add custom golds, and moderate chat.</div>
+    </div>
+
+    <!-- Admin login box -->
+    <div class="admin-box" id="adminAuthBox">
+      <div id="auth-form">
+        <label for="adminEmail">Admin Email</label>
+        <input id="adminEmail" type="text" placeholder="admin@example.com">
+        <label for="adminPass">Password</label>
+        <input id="adminPass" type="password" placeholder="password">
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button id="adminLoginBtn">Sign in</button>
+          <button id="adminCreateBtn" class="ghost" title="Create admin account (use cautiously)">Create account</button>
+        </div>
+        <div class="small" style="margin-top:8px">Admins: configured by the <code>adminEmails</code> list in this page.</div>
+      </div>
+
+      <div id="adminInfo" class="hidden">
+        <div class="small">Signed in as <b id="adminEmailText"></b></div>
+        <div style="margin-top:8px">
+          <button id="signOutBtn" class="ghost">Sign out</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr style="border:none;height:14px">
+
+  <section>
+    <h2 style="margin-top:0">Add Custom Gold</h2>
+    <label for="gold-name">Gold name</label>
+    <input id="gold-name" type="text" placeholder="Golden Taco">
+
+    <label for="gold-image">Image URL</label>
+    <input id="gold-image" type="text" placeholder="https://...png">
+
+    <label for="gold-rarity">Rarity</label>
+    <select id="gold-rarity">
+      <option value="common">Common</option>
+      <option value="uncommon">Uncommon</option>
+      <option value="rare">Rare</option>
+      <option value="epic">Epic</option>
+      <option value="legendary">Legendary</option>
+      <option value="chroma">Chroma</option>
+    </select>
+
+    <div class="buttons-row" style="margin-bottom:8px">
+      <button id="add-gold-btn">Add Custom Gold</button>
+      <button id="clear-chat" class="ghost">Clear Chat (messages)</button>
+      <button id="refresh-requests" class="ghost">Refresh Requests</button>
+    </div>
+
+    <div id="add-gold-alert" class="alert"></div>
+  </section>
+
+  <hr style="border:none;height:14px">
+
+  <section>
+    <h2>Pending Account Requests</h2>
+    <div id="request-list" class="request-list">Loading…</div>
+    <div id="requests-alert" class="alert"></div>
+  </section>
+</div>
+
+<!-- Firebase (modular v10) -->
+<script type="module">
+  // ---------- CONFIGURE FIREBASE ----------
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+  import {
+    getDatabase, ref, onValue, set, remove, update
+  } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+  import {
+    getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+    signOut, onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
+    authDomain: "goldet-504aa.firebaseapp.com",
+    databaseURL: "https://goldet-504aa-default-rtdb.firebaseio.com",
+    projectId: "goldet-504aa",
+    storageBucket: "goldet-504aa.firebasestorage.app",
+    messagingSenderId: "36312610816",
+    appId: "1:36312610816:web:ded0576d78ebf1ceba00e5",
+    measurementId: "G-TTJNTC824V"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const auth = getAuth(app);
+
+  // ---------- ADMIN AUTHORIZATION ----------
+  // Configure the list of allowed admin emails here (update in console for security)
+  const adminEmails = [
+    "you@yourdomain.com",       // <-- replace with real admin email(s)
+    "admin2@yourdomain.com"
+  ];
+
+  // UI refs
+  const reqListEl = document.getElementById("request-list");
+  const requestsAlert = document.getElementById("requests-alert");
+  const addGoldAlert = document.getElementById("add-gold-alert");
+  const adminAuthBox = document.getElementById("adminAuthBox");
+  const authForm = document.getElementById("auth-form");
+  const adminInfo = document.getElementById("adminInfo");
+  const adminEmailText = document.getElementById("adminEmailText");
+  const signOutLink = document.getElementById("sign-out-link");
+
+  // auth buttons
+  document.getElementById("adminLoginBtn").onclick = adminSignIn;
+  document.getElementById("adminCreateBtn").onclick = adminCreate;
+  document.getElementById("signOutBtn").onclick = () => signOut(auth);
+
+  signOutLink.onclick = () => signOut(auth);
+
+  // ---------- AUTH LISTENER ----------
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      authForm.classList.remove("hidden");
+      adminInfo.classList.add("hidden");
+      signOutLink.classList.add("hidden");
+      loadRequests(false); // still show requests but disable approve UI
+      return;
+    }
+
+    // check admin permission
+    const email = user.email || "";
+    if (!adminEmails.includes(email)) {
+      // not authorized
+      authForm.classList.remove("hidden");
+      adminInfo.classList.add("hidden");
+      signOutLink.classList.add("hidden");
+      alert("This account is not authorized as an admin. Sign in with an admin email.");
+      signOut(auth);
+      return;
+    }
+
+    // authorized admin
+    authForm.classList.add("hidden");
+    adminInfo.classList.remove("hidden");
+    adminEmailText.textContent = email;
+    signOutLink.classList.remove("hidden");
+
+    loadRequests(true); // show requests with approve/decline buttons enabled
+  });
+
+  // ---------- ADMIN SIGN IN / CREATE ----------
+  async function adminSignIn() {
+    const email = document.getElementById("adminEmail").value.trim();
+    const pass = document.getElementById("adminPass").value;
+    if (!email || !pass) { showAlert(addGoldAlert, "Enter admin email + password."); return; }
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+      showAlert(addGoldAlert, "Signed in.", true);
+    } catch (e) {
+      console.error(e);
+      showAlert(addGoldAlert, "Sign-in failed: " + e.message);
+    }
+  }
+
+  // Create an auth account for an admin (use carefully; better to add admin in console)
+  async function adminCreate() {
+    const email = document.getElementById("adminEmail").value.trim();
+    const pass = document.getElementById("adminPass").value;
+    if (!email || !pass) { showAlert(addGoldAlert, "Enter email + password to create."); return; }
+    try {
+      await createUserWithEmailAndPassword(auth, email, pass);
+      showAlert(addGoldAlert, "Admin account created. Add email to adminEmails list in this file.");
+    } catch (e) {
+      console.error(e);
+      showAlert(addGoldAlert, "Create failed: " + e.message);
+    }
+  }
+
+  // ---------- REQUESTS LOADING ----------
+  // loadRequests(enabled = boolean) -> if enabled==true show approve/decline UI; false = disabled
+  function loadRequests(enabled = false) {
+    // listen to /forms live
+    const formsRef = ref(db, "forms");
+    onValue(formsRef, (snapshot) => {
+      const data = snapshot.val() || {};
+      reqListEl.innerHTML = "";
+      let found = 0;
+
+      Object.entries(data).forEach(([username, form]) => {
+        if (!form || form.status !== "pending") return;
+        found++;
+        const div = document.createElement("div");
+        div.className = "request";
+        div.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <b>${escapeHtml(username)}</b>
+              <div class="small" style="margin-top:6px">Age: ${escapeHtml(String(form.age || '—'))} — Discord: ${escapeHtml(form.discord || '—')}</div>
+              <div style="margin-top:8px">Reason: ${escapeHtml(form.whyPlay || '')}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-left:12px">
+              <button ${enabled ? "" : "disabled"} onclick="approveUser('${encodeURIComponent(username)}')">Approve</button>
+              <button ${enabled ? "" : "disabled"} onclick="declineUser('${encodeURIComponent(username)}')">Decline</button>
+            </div>
+          </div>
+        `;
+        reqListEl.appendChild(div);
+      });
+
+      if (!found) reqListEl.innerHTML = "<div class='small'>No pending requests.</div>";
+    }, { onlyOnce: false });
+  }
+
+  // ---------- APPROVE / DECLINE ----------
+  // Approve: set forms/{username}/status = approved and create users/{username} with starter stats
+  window.approveUser = async function(usernameEnc) {
+    const username = decodeURIComponent(usernameEnc);
+    try {
+      // fetch the form data
+      const formRef = ref(db, `forms/${username}`);
+      let formSnapshot = await (import('https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js').then(m => m.get)(formRef));
+      const form = formSnapshot.exists() ? formSnapshot.val() : null;
+      if (!form) { showAlert(requestsAlert, "Form not found for " + username); return; }
+
+      // mark approved
+      await set(ref(db, `forms/${username}/status`), "approved");
+
+      // create user entry at users/{username} with starter stats (won't create Auth user)
+      const starter = {
+        username: username,
+        level: form.level ?? 1,
+        xp: form.xp ?? 0,
+        tokens: form.tokens ?? 0,
+        goldsUnlocked: form.blocksUnlocked ?? 0,
+        totalGolds: form.totalBlocks ?? 0,
+        packsOpened: form.packsOpened ?? 0,
+        messages: form.messages ?? 0,
+        profilePicture: form.profilePicture ?? "/images/default.png",
+        createdAt: Date.now()
+      };
+
+      await set(ref(db, `users/${username}`), starter);
+      showAlert(requestsAlert, `Approved ${username}`, true);
+    } catch (e) {
+      console.error(e);
+      showAlert(requestsAlert, "Failed to approve: " + e.message);
+    }
+  };
+
+  window.declineUser = async function(usernameEnc) {
+    const username = decodeURIComponent(usernameEnc);
+    try {
+      await set(ref(db, `forms/${username}/status`), "declined");
+      showAlert(requestsAlert, `Declined ${username}`);
+    } catch (e) {
+      console.error(e);
+      showAlert(requestsAlert, "Failed to decline: " + e.message);
+    }
+  };
+
+  // ---------- OTHER UTILITIES ----------
+  document.getElementById("add-gold-btn").onclick = async () => {
+    const name = document.getElementById("gold-name").value.trim();
+    const img = document.getElementById("gold-image").value.trim();
+    const rarity = document.getElementById("gold-rarity").value;
+    if (!name) return showAlert(addGoldAlert, "Enter a name.");
+    if (!img) return showAlert(addGoldAlert, "Enter an image URL.");
+    try {
+      const safeName = name.replace(/\./g, "_");
+      await set(ref(db, `golds/${safeName}`), { name, img, rarity, createdAt: Date.now() });
+      showAlert(addGoldAlert, `Added ${name}`, true);
+      document.getElementById("gold-name").value = "";
+      document.getElementById("gold-image").value = "";
+    } catch (e) {
+      console.error(e);
+      showAlert(addGoldAlert, "Failed to add: " + e.message);
+    }
+  };
+
+  document.getElementById("clear-chat").onclick = async () => {
+    if (!confirm("Clear ALL chat messages from Realtime Database? This cannot be undone.")) return;
+    try {
+      await remove(ref(db, "messages"));
+      showAlert(addGoldAlert, "Messages cleared", true);
+    } catch (e) {
+      console.error(e);
+      showAlert(addGoldAlert, "Failed to clear messages.");
+    }
+  };
+
+  document.getElementById("refresh-requests").onclick = () => loadRequests(true);
+
+  // small helper UI
+  function showAlert(container, msg, success = false) {
+    container.textContent = msg;
+    container.style.display = "block";
+    container.style.background = success ? "rgba(40,180,40,0.15)" : "rgba(255,0,0,0.12)";
+    setTimeout(()=> container.style.display = "none", 5000);
+  }
+
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c]); }
+
+  // On load, show requests (disabled) while signed out
+  loadRequests(false);
+
+</script>
+</body>
+</html>
