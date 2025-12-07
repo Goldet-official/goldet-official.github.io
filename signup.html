@@ -1,127 +1,54 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Signup | Goldet</title>
-  <link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet"/>
-
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Titan One', cursive;
-      background: linear-gradient(135deg, #000000, #1a1a1a);
-      color: #ffd700;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      text-align: center;
-    }
-
-    .signup-box {
-      background: rgba(255, 215, 0, 0.08);
-      border: 2px solid #ffd700;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-      padding: 25px;
-      border-radius: 15px;
-      width: 90%;
-      max-width: 380px;
-    }
-
-    h1 {
-      font-size: 30px;
-      margin-bottom: 20px;
-      color: #ffea8a;
-      text-shadow: 0 0 10px #ffbf00;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    input, textarea {
-      padding: 12px;
-      font-size: 16px;
-      border: none;
-      border-radius: 10px;
-      font-family: 'Titan One', cursive;
-      background: #fffbe6;
-      color: #000;
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 60px;
-    }
-
-    button {
-      padding: 12px;
-      font-size: 18px;
-      background: linear-gradient(135deg, #ffd700, #e0ac00);
-      color: #000;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
-    }
-
-    button:hover {
-      background: linear-gradient(135deg, #ffea8a, #ffd700);
-    }
-
-    .alert {
-      margin-top: 12px;
-      padding: 10px;
-      border-radius: 10px;
-      background: rgba(255, 215, 0, 0.2);
-      color: #fff;
-      font-size: 15px;
-    }
-
-    .step { display: none; }
-    .step.active { display: flex; flex-direction: column; }
-
-    h2 {
-      font-size: 18px;
-      margin-bottom: 6px;
-      color: #ffea8a;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Signup | Goldet</title>
+<link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet" />
+<style>
+  body{margin:0;background:#050505;color:#ffd; font-family:Arial,system-ui;}
+  .wrap{max-width:420px;margin:60px auto;padding:20px}
+  .card{background:#0f0f0f;border:2px solid rgba(212,175,55,0.12);padding:18px;border-radius:12px;box-shadow:0 6px 24px rgba(212,175,55,0.06)}
+  h1{font-family:'Titan One',cursive;color:#ffd700;margin:0 0 10px}
+  label{display:block;color:#e9d89a;margin-top:12px}
+  input,textarea,select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(212,175,55,0.06);background:#121212;color:#ffd;outline:none}
+  button{margin-top:14px;padding:12px;border-radius:10px;border:none;background:linear-gradient(90deg,#ffd700,#b8860b);color:#080808;font-weight:700;cursor:pointer}
+  .note{font-size:13px;color:#d9c08c;margin-top:10px}
+  .alert{margin-top:12px;padding:10px;border-radius:8px;display:none}
+</style>
 </head>
-
 <body>
-  <div class="signup-box">
-    <h1>Goldet Signup</h1>
+  <div class="wrap">
+    <div class="card">
+      <h1>Goldet Signup</h1>
+      <p class="note">Create an account. An admin will review and approve your request.</p>
 
-    <form id="signup-form">
-      <!-- Step 1 -->
-      <div id="step-1" class="step active">
-        <input type="text" id="username" placeholder="Create Username" required />
-        <input type="password" id="password" placeholder="Create Password" required />
-        <button type="button" onclick="nextStep()">Next</button>
-      </div>
+      <label>Username</label>
+      <input id="username" placeholder="Choose a username (unique)" autocomplete="off">
 
-      <!-- Step 2 -->
-      <div id="step-2" class="step">
-        <input type="text" id="age" placeholder="Age" required />
-        <input type="text" id="discord" placeholder="Discord Username" required />
-        <textarea id="whyPlay" placeholder="Why do you want to join Goldet?" required></textarea>
-        <button type="submit">Submit</button>
-      </div>
-    </form>
+      <label>Password</label>
+      <input id="password" type="password" placeholder="Create a password">
 
-    <div class="alert" id="alert-msg"></div>
+      <label>Age</label>
+      <input id="age" placeholder="Age">
+
+      <label>Discord</label>
+      <input id="discord" placeholder="Discord username">
+
+      <label>Why join Goldet?</label>
+      <textarea id="whyPlay" placeholder="Tell us why you want to join..." rows="3"></textarea>
+
+      <button id="submitBtn">Submit Signup Request</button>
+
+      <div id="alertBox" class="alert"></div>
+    </div>
   </div>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <script type="module">
+    // Firebase modular v10 (Realtime)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
-  <script>
-    // GOLDEN-FIREBASE CONFIG
     const firebaseConfig = {
       apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
       authDomain: "goldet-504aa.firebaseapp.com",
@@ -133,99 +60,66 @@
       measurementId: "G-TTJNTC824V"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-    function nextStep() {
-      document.getElementById("step-1").classList.remove("active");
-      document.getElementById("step-2").classList.add("active");
+    const usernameEl = document.getElementById("username");
+    const passwordEl = document.getElementById("password");
+    const ageEl = document.getElementById("age");
+    const discordEl = document.getElementById("discord");
+    const whyEl = document.getElementById("whyPlay");
+    const submitBtn = document.getElementById("submitBtn");
+    const alertBox = document.getElementById("alertBox");
+
+    function showAlert(msg, ok=false){
+      alertBox.style.display = "block";
+      alertBox.style.background = ok ? "rgba(40,180,40,0.12)" : "rgba(255,0,0,0.12)";
+      alertBox.textContent = msg;
+      setTimeout(()=> alertBox.style.display = "none", 4500);
     }
 
-    const form = document.getElementById("signup-form");
-    const alertBox = document.getElementById("alert-msg");
-
-    // Password hashing (SHA-256)
-    async function hashPassword(password) {
-      const msgBuffer = new TextEncoder().encode(password);
-      const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+    async function hashPassword(pw){
+      const buf = new TextEncoder().encode(pw);
+      const digest = await crypto.subtle.digest("SHA-256", buf);
+      return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2,'0')).join('');
     }
 
-    form.onsubmit = async (e) => {
-      e.preventDefault();
+    submitBtn.addEventListener("click", async () => {
+      const username = usernameEl.value.trim();
+      const password = passwordEl.value;
+      const age = ageEl.value.trim();
+      const discord = discordEl.value.trim();
+      const why = whyEl.value.trim();
 
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const age = document.getElementById("age").value.trim();
-      const discord = document.getElementById("discord").value.trim();
-      const whyPlay = document.getElementById("whyPlay").value.trim();
-
-      if (!username || !password || !age || !discord || !whyPlay) {
-        return showAlert("All fields are required.");
+      if (!username || !password || !age || !discord || !why) {
+        return showAlert("Please fill all fields.");
       }
 
-      const hashedPassword = await hashPassword(password);
+      // disallow dots and slashes in keys (safety)
+      if (/[.#$\/\[\]]/.test(username)) return showAlert("Username contains invalid characters (. # $ / [ ]).");
 
-      const userRef = db.ref("forms/" + username);
-      const snapshot = await userRef.get();
+      // check if username already requested or user exists
+      const formsSnap = await get(ref(db, `forms/${username}`));
+      const usersSnap = await get(ref(db, `users/${username}`));
+      if (formsSnap.exists()) return showAlert("A request with that username already exists.");
+      if (usersSnap.exists()) return showAlert("Username already registered.");
 
-      if (snapshot.exists()) {
-        return showAlert("Username already submitted.");
-      }
+      const hashed = await hashPassword(password);
 
-      await userRef.set({
-        password: hashedPassword,
+      await set(ref(db, `forms/${username}`), {
+        password: hashed,
         age,
         discord,
-        whyPlay,
-        status: "pending"
+        whyPlay: why,
+        status: "pending",
+        requestedAt: Date.now()
       });
 
-      showAlert("Signup submitted! Waiting for approval...", true);
-      listenForApproval(username, hashedPassword);
-    };
+      showAlert("Request submitted. Wait for admin approval.", true);
 
-    function showAlert(msg, success = false) {
-      alertBox.textContent = msg;
-      alertBox.style.background = success ? "rgba(0,255,120,0.4)" : "rgba(255,0,0,0.5)";
-    }
-
-    function listenForApproval(username, hashedPassword) {
-      const statusRef = db.ref("forms/" + username + "/status");
-
-      statusRef.on("value", (snapshot) => {
-        const status = snapshot.val();
-
-        if (status === "approved") {
-          showAlert("✔ Approved! Redirecting...", true);
-
-          setTimeout(() => {
-            localStorage.setItem("goldetCurrentUser", username);
-
-            const userData = JSON.parse(localStorage.getItem("goldetStorage") || "{}");
-
-            if (!userData[username]) {
-              userData[username] = {
-                password: hashedPassword,
-                gold: 0,
-                pets: [],
-                profilePicture: "/images/default.png",
-                trophies: 0,
-                dailySpin: null
-              };
-
-              localStorage.setItem("goldetStorage", JSON.stringify(userData));
-            }
-
-            window.location.href = "stats.html";
-          }, 2500);
-
-        } else if (status === "declined") {
-          showAlert("❌ Signup declined.");
-        }
-      });
-    }
+      // clear inputs
+      usernameEl.value = passwordEl.value = ageEl.value = discordEl.value = whyEl.value = "";
+    });
   </script>
 </body>
 </html>
