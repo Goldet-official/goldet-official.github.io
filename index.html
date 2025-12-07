@@ -1,10 +1,251 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My GitHub Pages Website</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Goldet</title>
+  <link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --gold1: #d4af37;
+      --gold2: #f5d67b;
+      --gold3: #b8860b;
+      --dark: #0a0a0a;
+      --dark2: #181818;
+      --glass: rgba(255,255,255,0.06);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Titan One', cursive;
+      display: flex;
+      flex-wrap: wrap;
+      min-height: 100vh;
+      background: radial-gradient(circle at 20% 20%, rgba(212,175,55,0.18), transparent 60%),
+                  radial-gradient(circle at 80% 80%, rgba(245,214,123,0.12), transparent 60%),
+                  var(--dark);
+      color: var(--gold2);
+    }
+
+    /* LEFT SIDE */
+    .left, .right {
+      box-sizing: border-box;
+      padding: 60px;
+    }
+
+    .left {
+      width: 50%;
+      background: linear-gradient(135deg, var(--gold1), var(--gold3));
+      color: #0a0a0a;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-shadow: inset 0 0 40px rgba(0,0,0,0.35);
+    }
+
+    .left h1 {
+      font-size: 56px;
+      margin: 0 0 10px;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    }
+
+    .left p {
+      font-size: 18px;
+      line-height: 1.6;
+      color: #3b2f07;
+      margin: 20px 0 40px;
+      font-weight: 500;
+    }
+
+    /* BUTTONS */
+    .buttons {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background: var(--dark2);
+      color: var(--gold2);
+      padding: 14px 28px;
+      font-size: 18px;
+      border: 2px solid var(--gold1);
+      border-radius: 12px;
+      text-decoration: none;
+      transition: 0.25s;
+      box-shadow: 0 0 10px rgba(212,175,55,0.3);
+    }
+
+    .btn:hover {
+      background: var(--gold1);
+      color: #0a0a0a;
+      box-shadow: 0 0 18px var(--gold1);
+    }
+
+    .discord-btn {
+      background: #5865F2;
+      border-color: #99a4ff;
+    }
+
+    .discord-btn:hover {
+      background: #3d49b8;
+    }
+
+    .pronounce {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #3b2f07;
+    }
+
+    .footer {
+      font-size: 12px;
+      color: #3b2f07;
+      margin-top: auto;
+    }
+
+    /* RIGHT SIDE ICON GRID */
+    .right {
+      width: 50%;
+      background: linear-gradient(135deg, #000, #1a1303);
+      display: flex;
+      flex-wrap: wrap;
+      align-content: center;
+      justify-content: center;
+      padding: 40px;
+      gap: 20px;
+      box-shadow: inset 0 0 50px rgba(212,175,55,0.12);
+    }
+
+    .icon {
+      width: 90px;
+      height: 90px;
+      background: var(--glass);
+      border: 2px solid var(--gold1);
+      border-radius: 16px;
+      box-shadow: 0 0 15px rgba(212,175,55,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      backdrop-filter: blur(4px);
+    }
+
+    .icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* VERSION TAG */
+    .version {
+      position: absolute;
+      bottom: 10px;
+      right: 20px;
+      font-size: 12px;
+      color: var(--gold2);
+      text-shadow: 0 0 6px rgba(212,175,55,0.4);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      body {
+        flex-direction: column;
+      }
+
+      .left, .right {
+        width: 100%;
+        padding: 40px;
+      }
+
+      .left h1 {
+        font-size: 42px;
+      }
+
+      .btn {
+        width: 100%;
+        text-align: center;
+      }
+
+      .buttons {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .icon {
+        width: 70px;
+        height: 70px;
+      }
+
+      .version {
+        position: static;
+        text-align: center;
+        margin-top: 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .left h1 {
+        font-size: 32px;
+      }
+
+      .left p {
+        font-size: 16px;
+      }
+
+      .btn {
+        font-size: 16px;
+        padding: 12px 20px;
+      }
+
+      .pronounce {
+        font-size: 12px;
+      }
+
+      .footer {
+        font-size: 10px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-    <h1>Hello, World!</h1>
-    <p>This is my first website hosted on GitHub Pages.</p>
+
+  <div class="left">
+    <h1>Goldet</h1>
+    <h1>Golden Private Server</h1>
+    <p>The first ever gold-themed platform created by YOU — powered by HTML, CSS, and JavaScript, redesigned with a metallic, premium Goldet style.</p>
+
+    <div class="buttons">
+      <a href="/signup.html" class="btn">Signup</a>
+      <a href="/login.html" class="btn">Login</a>
+      <a href="https://discord.gg/rfHHYjhA3H" class="btn discord-btn" target="_blank">Discord</a>
+      <a href="/credits.html" class="btn">Credits</a>
+    </div>
+
+    <div class="pronounce">🔈 Pronunciation ("Gold-et")</div>
+
+    <div class="footer">
+      We are not affiliated with Blooket. <br>
+      Goldet © 2025 All Rights Reserved.
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="icon"><img src="https://cdn.glitch.global/36ec2602-304b-444b-8f2f-08c65c92bbc0/thumbnails%2Fthumbnails_Strawberry%20Milk.png?1750440367893" alt="Strawberry Milk"></div>
+    <div class="icon"><img src="https://cdn.glitch.global/36ec2602-304b-444b-8f2f-08c65c92bbc0/thumbnails%2Fthumbnails_Warriet%20Milk.png?1750440415086" alt="Warriet Milk"></div>
+    <div class="icon"><img src="https://cdn.glitch.global/36ec2602-304b-444b-8f2f-08c65c92bbc0/thumbnails%2Fmoon.png?1750451519920" alt="Moon"></div>
+    <div class="icon"><img src="https://cdn.glitch.global/36ec2602-304b-444b-8f2f-08c65c92bbc0/thumbnails%2Fastronaut.png?1750451907761" alt="Astronaut"></div>
+    <div class="icon"><img src="https://i.postimg.cc/jSssbtjq/kingPig.png" alt="King Pig"></div>
+    <div class="icon"><img src="https://i.postimg.cc/t7T7JQH8/speed-Good-Alr.png" alt="SpeedGoodAlr"></div>
+    <div class="icon"><img src="https://i.postimg.cc/htNhD5Z3/Blooket-Warrior.gif" alt="Blooket Warrior"></div>
+    <div class="icon"><img src="/images/taco.png" alt="Taco"></div>
+  </div>
+
+  <div class="version">
+    Running Goldet v1.3.0<br>
+    <a href="#" style="color:var(--gold2);text-decoration:underline;">Terms of Service</a>
+  </div>
+
 </body>
 </html>
