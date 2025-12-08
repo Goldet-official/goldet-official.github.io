@@ -26,81 +26,71 @@
       <button id="loginBtn">Log in</button>
 
       <div id="alertBox" class="alert"></div>
-      <p style="margin-top:12px;font-size:14px;color:#d9c08c">No account? <a href="signup.html" style="color:#ffd700">Signup</a> — admins will approve.</p>
+      <p style="margin-top:12px;font-size:14px;color:#d9c08c">
+        No account? <a href="signup.html" style="color:#ffd700">Signup</a>.  
+        (Admins must approve)
+      </p>
     </div>
   </div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-  import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
-    authDomain: "goldet-504aa.firebaseapp.com",
-    databaseURL: "https://goldet-504aa-default-rtdb.firebaseio.com",
-    projectId: "goldet-504aa",
-    storageBucket: "goldet-504aa.appspot.com",
-    messagingSenderId: "36312610816",
-    appId: "1:36312610816:web:ded0576d78ebf1ceba00e5",
-    measurementId: "G-TTJNTC824V"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
-  const usernameEl = document.getElementById("username");
-  const passwordEl = document.getElementById("password");
-  const loginBtn = document.getElementById("loginBtn");
+<script>
+// --- Utility ---
+function showAlert(msg, ok=false){
   const alertBox = document.getElementById("alertBox");
+  alertBox.style.display = "block";
+  alertBox.style.background = ok ? "rgba(40,180,40,0.12)" : "rgba(255,0,0,0.12)";
+  alertBox.textContent = msg;
+  setTimeout(()=> alertBox.style.display = "none", 4000);
+}
 
-  function showAlert(msg, ok=false){
-    alertBox.style.display = "block";
-    alertBox.style.background = ok ? "rgba(40,180,40,0.12)" : "rgba(255,0,0,0.12)";
-    alertBox.textContent = msg;
-    setTimeout(()=> alertBox.style.display = "none", 4000);
-  }
+// SHA-256 hashing
+async function hashPassword(pw){
+  const buf = new TextEncoder().encode(pw);
+  const digest = await crypto.subtle.digest("SHA-256", buf);
+  return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
 
-  async function hashPassword(pw){
-    const buf = new TextEncoder().encode(pw);
-    const digest = await crypto.subtle.digest("SHA-256", buf);
-    return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2,'0')).join('');
-  }
+// Local DB loader
+function loadLS(key){
+  return JSON.parse(localStorage.getItem(key) || "{}");
+}
 
-  // fetch object from Realtime DB path
-  async function dbGet(path){
-    const snap = await get(ref(db, path));
-    return snap.exists() ? snap.val() : null;
-  }
+// Local DB saver
+function saveLS(key, data){
+  localStorage.setItem(key, JSON.stringify(data));
+}
 
-  loginBtn.addEventListener("click", async () => {
-    const username = usernameEl.value.trim();
-    const password = passwordEl.value;
-    if (!username || !password) return showAlert("Enter username and password.");
 
-    // fetch form entry
-    const form = await dbGet(`forms/${username}`);
-    if (!form) return showAlert("Account not found. Are you sure you registered?");
+// --- LOGIN HANDLER ---
+document.getElementById("loginBtn").addEventListener("click", async () => {
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value;
 
-    if (form.status !== "approved") return showAlert("Account not approved yet. Wait for admin.");
+  if (!username || !password)
+    return showAlert("Enter username and password.");
 
-    const hashed = await hashPassword(password);
-    if (form.password !== hashed) return showAlert("Incorrect password.");
+  const forms = loadLS("forms");   // pending/approved accounts
+  const users = loadLS("users");   // user stats
 
-    // success: load user record if exists
-    const userData = await dbGet(`users/${username}`) || {};
+  const form = forms[username];
+  if (!form) return showAlert("Account not found. Did you register?");
 
-    // Ensure local storage structure for other pages
-    const store = JSON.parse(localStorage.getItem("goldetStorage") || "{}");
-    store[username] = {
-      ...userData,
-      password: form.password // keep hash only (not plaintext)
-    };
-    localStorage.setItem("goldetStorage", JSON.stringify(store));
-    localStorage.setItem("goldetCurrentUser", username);
+  if (form.status !== "approved")
+    return showAlert("Account not approved yet. Wait for admin.");
 
-    showAlert("Login successful — redirecting...", true);
-    setTimeout(()=> window.location.href = "stats.html", 900);
-  });
+  const hashed = await hashPassword(password);
+  if (hashed !== form.password)
+    return showAlert("Incorrect password.");
+
+  // SUCCESS
+  const userData = users[username] || {};
+
+  // Save login session
+  localStorage.setItem("goldetCurrentUser", username);
+
+  showAlert("Login successful — redirecting...", true);
+  setTimeout(()=> window.location.href = "stats.html", 900);
+});
 </script>
 </body>
 </html>
