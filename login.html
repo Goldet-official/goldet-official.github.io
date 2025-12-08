@@ -34,6 +34,25 @@
   </div>
 
 <script>
+
+
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
+  authDomain: "goldet-504aa.firebaseapp.com",
+  databaseURL: "https://goldet-504aa-default-rtdb.firebaseio.com",
+  projectId: "goldet-504aa",
+  storageBucket: "goldet-504aa.appspot.com",
+  messagingSenderId: "36312610816",
+  appId: "1:36312610816:web:ded0576d78ebf1ceba00e5",
+  measurementId: "G-TTJNTC824V"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
 // --- Utility ---
 function showAlert(msg, ok=false){
   const alertBox = document.getElementById("alertBox");
@@ -69,8 +88,10 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
   if (!username || !password)
     return showAlert("Enter username and password.");
 
-  const forms = loadLS("forms");   // pending/approved accounts
-  const users = loadLS("users");   // user stats
+  const formSnap = await get(ref(db, "forms/" + username));
+if (!formSnap.exists()) return showAlert("Account not found.");
+const form = formSnap.val();
+
 
   const form = forms[username];
   if (!form) return showAlert("Account not found. Did you register?");
