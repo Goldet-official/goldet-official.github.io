@@ -349,12 +349,12 @@
 
   window.declinePending = async function(uid) {
     try {
-      const formSnap = await get(ref(db, `pendingusers/${uid}`));
+      const formSnap = await get(ref(db, `pendingUsers/${uid}`));
       if (!formSnap.exists()) return showAlert(requestsAlert, "Pending form not found.");
       const f = formSnap.val();
 
       // set declined status and optionally remove after
-      await update(ref(db, `pendingusers/${uid}`), { status: "declined", declinedAt: Date.now() });
+      await update(ref(db, `pendingUsers/${uid}`), { status: "declined", declinedAt: Date.now() });
 
       // if username reservation exists (usernames/{username} -> uid), remove it
       if (f.username) {
