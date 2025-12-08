@@ -3,64 +3,115 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Signup | Goldet</title>
+<title>Sign Up | Goldet</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet" />
+
 <style>
-  body{margin:0;background:#050505;color:#ffd;font-family:Arial,system-ui;}
-  .wrap{max-width:420px;margin:60px auto;padding:20px}
-  .card{background:#0f0f0f;border:2px solid rgba(212,175,55,0.12);padding:18px;border-radius:12px;box-shadow:0 6px 24px rgba(212,175,55,0.06)}
-  h1{font-family:'Titan One',cursive;color:#ffd700;margin:0 0 10px}
-  label{display:block;color:#e9d89a;margin-top:12px}
-  input,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(212,175,55,0.06);background:#121212;color:#ffd;outline:none}
-  button{margin-top:14px;padding:12px;border-radius:10px;border:none;background:linear-gradient(90deg,#ffd700,#b8860b);color:#080808;font-weight:700;cursor:pointer}
-  .alert{margin-top:12px;padding:10px;border-radius:8px;display:none}
+  body {
+    margin: 0;
+    background: #050505;
+    color: #ffd;
+    font-family: Arial, system-ui;
+  }
+  .page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .card {
+    width: 100%;
+    max-width: 420px;
+    background: #0d0d0d;
+    border: 2px solid rgba(212,175,55,0.15);
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 6px 30px rgba(212,175,55,0.08);
+  }
+  h1 {
+    font-family: 'Titan One', cursive;
+    text-align: center;
+    color: #ffd700;
+    margin-bottom: 20px;
+    font-size: 36px;
+  }
+  label {
+    display: block;
+    margin-top: 14px;
+    color: #e9d89a;
+    font-size: 15px;
+  }
+  input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 6px;
+    border-radius: 10px;
+    border: 1px solid rgba(212,175,55,0.15);
+    background: #121212;
+    color: #ffd;
+    font-size: 16px;
+  }
+  button {
+    margin-top: 20px;
+    padding: 14px;
+    width: 100%;
+    border-radius: 12px;
+    border: none;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    background: linear-gradient(120deg,#ffd700,#b8860b);
+    color: #050505;
+  }
+  .alert {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 10px;
+    display: none;
+    text-align: center;
+    font-size: 14px;
+  }
+  .bottomLink {
+    text-align: center;
+    margin-top: 18px;
+  }
+  .bottomLink a {
+    color: #ffd700;
+    text-decoration: none;
+    font-weight: bold;
+  }
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <h1>Goldet Signup</h1>
 
-      <label>Username</label>
-      <input id="username" placeholder="Choose a username (unique)" autocomplete="off">
+<div class="page">
+  <div class="card">
 
-      <label>Email</label>
-      <input id="email" placeholder="Enter your email" autocomplete="off">
+    <h1>Create Account</h1>
 
-      <label>Password</label>
-      <input id="password" type="password" placeholder="Create a password">
+    <label>Username</label>
+    <input id="username" autocomplete="off">
 
-      <label>Age</label>
-      <input id="age" placeholder="Age">
+    <label>Password</label>
+    <input id="password" type="password">
 
-      <label>Discord</label>
-      <input id="discord" placeholder="Discord username">
+    <button id="signupBtn">Create Account</button>
 
-      <label>Why join Goldet?</label>
-      <textarea id="whyPlay" placeholder="Tell us why you want to join..." rows="3"></textarea>
+    <div id="alertBox" class="alert"></div>
 
-      <button id="submitBtn">Submit Signup</button>
-
-      <div id="alertBox" class="alert"></div>
+    <div class="bottomLink">
+      Already have an account? <a href="login.html">Login</a>
     </div>
+
   </div>
+</div>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { 
-  getAuth, 
-  createUserWithEmailAndPassword, 
-  signOut 
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-
-import { 
-  getDatabase, 
-  ref, 
-  set, 
-  get, 
-  child 
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
@@ -78,82 +129,44 @@ const auth = getAuth(app);
 const db = getDatabase(app);
 
 const alertBox = document.getElementById("alertBox");
-function showAlert(msg, ok = false) {
+function showAlert(msg, ok=false){
   alertBox.style.display = "block";
   alertBox.style.background = ok ? "rgba(40,180,40,0.12)" : "rgba(255,0,0,0.12)";
   alertBox.textContent = msg;
   setTimeout(()=> alertBox.style.display = "none", 4500);
 }
 
-document.getElementById("submitBtn").addEventListener("click", async () => {
+function makeEmailFromUsername(name){
+  return `${name}@goldet.internal`;
+}
+
+document.getElementById("signupBtn").addEventListener("click", async () => {
   const username = document.getElementById("username").value.trim();
-  const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
-  const age = document.getElementById("age").value.trim();
-  const discord = document.getElementById("discord").value.trim();
-  const why = document.getElementById("whyPlay").value.trim();
 
-  if (!username || !email || !password || !age || !discord || !why)
-    return showAlert("Please fill all fields.");
+  if (!username || !password)
+    return showAlert("Enter username and password.");
 
-  if (/[.#$\/\[\]]/.test(username))
-    return showAlert("Username contains invalid characters (. # $ / [ ])");
+  const email = makeEmailFromUsername(username);
 
   try {
-    // Username check
-    const nameSnap = await get(child(ref(db), `usernames/${username}`));
-    if (nameSnap.exists()) return showAlert("Username already taken.");
+    const userCred = await createUserWithEmailAndPassword(auth, email, password);
+    const uid = userCred.user.uid;
 
-    // Create Firebase Auth user
-    const cred = await createUserWithEmailAndPassword(auth, email, password);
-    const uid = cred.user.uid;
-
-    // Reserve username
-    await set(ref(db, `usernames/${username}`), uid);
-
-    // Write new user record
-    await set(ref(db, `users/${uid}`), {
-      username,
-      email,
-      age,
-      discord,
-      whyPlay: why,
-
-      approved: false,    // wait for admin
-      isAdmin: false,     // default users
-
-      stats: {
-        packsOpened: 0,
-        messagesSent: 0,
-        golds: {}
-      },
-
-      badges: {},
-
-      chatColor: {
-        name: "#ffffff",
-        text: "#000000"
-      }
+    await set(ref(db, `pendingUsers/${uid}`), {
+      username: username,
+      createdAt: Date.now()
     });
 
-    await signOut(auth);
-
-    showAlert("Signup complete. Waiting for admin approval.", true);
-
-    document.getElementById("username").value =
-    document.getElementById("email").value =
-    document.getElementById("password").value =
-    document.getElementById("age").value =
-    document.getElementById("discord").value =
-    document.getElementById("whyPlay").value = "";
+    showAlert("Account created! Wait for admin approval.", true);
+    setTimeout(()=> window.location.href = "login.html", 800);
 
   } catch (err) {
     console.error(err);
-    if (err.code === "auth/weak-password") return showAlert("Password too weak.");
-    if (err.code === "auth/email-already-in-use") return showAlert("Email already in use.");
-    showAlert("Signup failed: " + err.message);
+    showAlert("Sign up failed: " + err.message);
   }
 });
 </script>
+
 </body>
 </html>
