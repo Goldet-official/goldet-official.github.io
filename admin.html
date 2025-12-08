@@ -1,296 +1,220 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin Panel | Goldet</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<title>Admin Panel</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap">
 
 <style>
-  body {
-    margin: 0;
-    background: #050505;
-    color: #ffd;
-    font-family: Arial, system-ui;
-    display: flex;
-  }
+    body {
+        margin: 0;
+        font-family: "Titan One", sans-serif;
+        background: #0d0d0d;
+        color: #f0d88a;
+    }
 
-  /* Sidebar */
-  .sidebar {
-    width: 260px;
-    height: 100vh;
-    background: #0d0d0d;
-    border-right: 2px solid rgba(212,175,55,0.15);
-    padding: 20px;
-  }
-  .sidebar h2 {
-    font-family: 'Titan One', cursive;
-    color: #ffd700;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  .menuBtn {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 10px;
-    border-radius: 10px;
-    border: none;
-    background: linear-gradient(120deg,#ffd700,#b8860b);
-    color: #050505;
-    font-weight: 700;
-    cursor: pointer;
-    font-size: 16px;
-  }
+    .topbar {
+        background: #1c1c1c;
+        padding: 20px;
+        text-align: center;
+        font-size: 32px;
+        color: #fcd977;
+        border-bottom: 4px solid #fcd977;
+    }
 
-  /* Main panel */
-  .main {
-    flex: 1;
-    padding: 20px;
-  }
+    .container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+        padding: 30px;
+    }
 
-  .card {
-    background: #0d0d0d;
-    border: 2px solid rgba(212,175,55,0.15);
-    padding: 20px;
-    border-radius: 18px;
-    box-shadow: 0 6px 30px rgba(212,175,55,0.09);
-    margin-bottom: 25px;
-  }
+    .card {
+        background: #1c1c1c;
+        border: 3px solid #fcd977;
+        border-radius: 12px;
+        padding: 20px;
+        min-height: 200px;
+        box-shadow: 0 0 10px rgba(255, 207, 110, 0.4);
+    }
 
-  h1 {
-    font-family: 'Titan One', cursive;
-    color: #ffd700;
-    margin-top: 0;
-  }
+    .card h2 {
+        margin-top: 0;
+        font-size: 26px;
+        color: #ffea9c;
+    }
 
-  .userBox, .pendingBox {
-    padding: 12px;
-    border: 1px solid rgba(212,175,55,0.25);
-    border-radius: 10px;
-    margin-bottom: 12px;
-  }
+    button {
+        background: #ffcf49;
+        border: none;
+        padding: 10px 15px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 10px;
+        border-radius: 8px;
+    }
 
-  button.smallBtn {
-    padding: 7px 12px;
-    background: #ffd700;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    color: #050505;
-    font-weight: bold;
-    margin-left: 8px;
-  }
+    button:hover {
+        background: #ffe083;
+    }
 
-  .alert {
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    display: none;
-  }
+    .user-item {
+        border-bottom: 1px solid #444;
+        padding: 8px 0;
+    }
+
+    .small-btn {
+        font-size: 14px;
+        padding: 5px 8px;
+        margin-left: 6px;
+    }
 </style>
 </head>
+
 <body>
 
-<div class="sidebar">
-  <h2>ADMIN</h2>
-  <button class="menuBtn" onclick="showSection('pending')">Pending Users</button>
-  <button class="menuBtn" onclick="showSection('users')">All Users</button>
-  <button class="menuBtn" onclick="showSection('gamestate')">Game Controls</button>
-  <button class="menuBtn" onclick="logout()">Logout</button>
-</div>
+<div class="topbar">ADMIN PANEL</div>
 
-<div class="main">
+<div class="container">
 
-  <div id="alertBox" class="alert"></div>
-
-  <!-- Pending Users -->
-  <div id="pending" class="section">
+    <!-- Pending Users -->
     <div class="card">
-      <h1>Pending Approvals</h1>
-      <div id="pendingList">Loading...</div>
+        <h2>Pending Users</h2>
+        <div id="pendingList">Loading...</div>
     </div>
-  </div>
 
-  <!-- All Users -->
-  <div id="users" class="section" style="display:none;">
+    <!-- All Users -->
     <div class="card">
-      <h1>All Users</h1>
-      <div id="usersList">Loading...</div>
+        <h2>Users</h2>
+        <div id="userList">Loading...</div>
     </div>
-  </div>
 
-  <!-- Game State Controls -->
-  <div id="gamestate" class="section" style="display:none;">
+    <!-- Game State -->
     <div class="card">
-      <h1>Game Controls</h1>
-
-      <label>Global Multiplier</label>
-      <input id="globalMultiplier" type="number" style="width:120px;padding:8px;background:#121212;border-radius:6px;color:#ffd;">
-      <button class="smallBtn" onclick="saveGameState()">Save</button>
-
-      <h3>Current Game State:</h3>
-      <pre id="gameStateBox" style="white-space:pre-wrap;"></pre>
+        <h2>Game State</h2>
+        <div id="gameState">Loading...</div>
+        <button onclick="toggleGame()">Toggle Game State</button>
     </div>
-  </div>
 
 </div>
 
+<!-- Firebase -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { 
-  getDatabase, ref, get, set, update, remove 
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
-import { 
-  getAuth, signOut, onAuthStateChanged 
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    // -----------------------------------------------------
+    // 🔥 YOUR FIREBASE CONFIG — INSERT YOURS HERE
+    // -----------------------------------------------------
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
-  authDomain: "goldet-504aa.firebaseapp.com",
-  databaseURL: "https://goldet-504aa-default-rtdb.firebaseio.com",
-  projectId: "goldet-504aa",
-  storageBucket: "goldet-504aa.appspot.com",
-  messagingSenderId: "36312610816",
-  appId: "1:36312610816:web:ded0576d78ebf1ceba00e5"
-};
+    const firebaseConfig = {
+        apiKey: "",
+        authDomain: "",
+        databaseURL: "",
+        projectId: "",
+        storageBucket: "",
+        messagingSenderId: "",
+        appId: ""
+    };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const auth = getAuth(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-const alertBox = document.getElementById("alertBox");
+    // ----------------------------
+    // Load Pending Users
+    // ----------------------------
+    const pendingRef = ref(db, "pendingUsers");
+    onValue(pendingRef, snapshot => {
+        const list = document.getElementById("pendingList");
+        list.innerHTML = "";
 
-function showAlert(msg, ok=false){
-  alertBox.style.display = "block";
-  alertBox.style.background = ok ? "rgba(40,180,40,0.15)" : "rgba(255,0,0,0.15)";
-  alertBox.textContent = msg;
-  setTimeout(()=> alertBox.style.display = "none", 3500);
-}
+        if (!snapshot.exists()) {
+            list.innerHTML = "No pending users.";
+            return;
+        }
 
-/* PAGE SWITCHING */
-function showSection(id){
-  document.querySelectorAll(".section").forEach(s => s.style.display="none");
-  document.getElementById(id).style.display="block";
-}
+        snapshot.forEach(child => {
+            const u = child.val();
+            list.innerHTML += `
+                <div class="user-item">
+                    <b>${u.username}</b> (${child.key})
+                    <button class="small-btn" onclick="approve('${child.key}', '${u.username}', '${u.email}')">Approve</button>
+                    <button class="small-btn" onclick="deny('${child.key}')">Deny</button>
+                </div>
+            `;
+        });
+    });
 
-/* LOGOUT */
-window.logout = function(){
-  signOut(auth);
-  localStorage.clear();
-  window.location.href = "login.html";
-};
+    // Approve user
+    window.approve = (uid, username, email) => {
+        update(ref(db, "users/" + uid), {
+            username: username,
+            email: email,
+            stats: { xp: 0, coins: 0, level: 1 },
+            admin: false,
+            chatColor: "#ffffff",
+            badges: []
+        });
 
-/* CHECK ADMIN STATUS */
-onAuthStateChanged(auth, async user => {
-  if (!user) return window.location.href = "login.html";
+        remove(ref(db, "pendingUsers/" + uid));
+    };
 
-  const uid = user.uid;
-  const snap = await get(ref(db, `users/${uid}`));
+    // Deny user
+    window.deny = (uid) => {
+        remove(ref(db, "pendingUsers/" + uid));
+    };
 
-  if (!snap.exists() || !snap.val().isAdmin){
-    return window.location.href = "login.html";
-  }
 
-  loadPending();
-  loadUsers();
-  loadGameState();
-});
+    // ----------------------------
+    // Load Users
+    // ----------------------------
+    const usersRef = ref(db, "users");
+    onValue(usersRef, snapshot => {
+        const list = document.getElementById("userList");
+        list.innerHTML = "";
 
-/* LOAD PENDING USERS */
-async function loadPending(){
-  const box = document.getElementById("pendingList");
-  const snap = await get(ref(db, "pendingUsers"));
+        if (!snapshot.exists()) {
+            list.innerHTML = "No users.";
+            return;
+        }
 
-  if (!snap.exists()) {
-    box.innerHTML = "<i>No pending users.</i>";
-    return;
-  }
+        snapshot.forEach(child => {
+            const u = child.val();
+            list.innerHTML += `
+                <div class="user-item">
+                    <b>${u.username}</b>  
+                    <br>XP: ${u.stats?.xp || 0} | Coins: ${u.stats?.coins || 0} | Level: ${u.stats?.level || 1}
+                    <br>Admin: ${u.admin ? "YES" : "NO"}
+                    <button class="small-btn" onclick="makeAdmin('${child.key}')">Make Admin</button>
+                    <button class="small-btn" onclick="delUser('${child.key}')">Delete</button>
+                </div>
+            `;
+        });
+    });
 
-  box.innerHTML = "";
-  snap.forEach(child => {
-    const uid = child.key;
-    const data = child.val();
+    window.makeAdmin = (uid) => {
+        update(ref(db, "users/" + uid), { admin: true });
+    };
 
-    box.innerHTML += `
-      <div class="pendingBox">
-        <b>${data.username}</b> <br>
-        UID: ${uid}<br>
-        <button class="smallBtn" onclick="approve('${uid}','${data.username}')">Approve</button>
-        <button class="smallBtn" onclick="deny('${uid}')">Deny</button>
-      </div>
-    `;
-  });
-}
+    window.delUser = (uid) => {
+        remove(ref(db, "users/" + uid));
+    };
 
-/* APPROVE USER */
-window.approve = async function(uid, username){
-  await set(ref(db, `users/${uid}`), {
-    username: username,
-    approved: true,
-    isAdmin: false,
-    chatColor: { name:"#fff", text:"#fff" },
-    badges: {},
-    stats: { packsOpened: 0, messagesSent: 0, golds:{} }
-  });
 
-  await remove(ref(db, `pendingUsers/${uid}`));
-  showAlert("User approved!", true);
-  loadPending();
-  loadUsers();
-};
+    // ----------------------------
+    // Game State
+    // ----------------------------
+    const gameRef = ref(db, "gameState");
+    onValue(gameRef, snapshot => {
+        document.getElementById("gameState").innerHTML =
+            snapshot.exists() ? JSON.stringify(snapshot.val()) : "No game state";
+    });
 
-/* DENY USER */
-window.deny = async function(uid){
-  await remove(ref(db, `pendingUsers/${uid}`));
-  showAlert("User removed.");
-  loadPending();
-};
+    window.toggleGame = () => {
+        update(ref(db, "gameState"), {
+            running: Math.random() > 0.5  // Example toggle
+        });
+    };
 
-/* LOAD ALL USERS */
-async function loadUsers(){
-  const box = document.getElementById("usersList");
-  const snap = await get(ref(db, "users"));
-
-  if (!snap.exists()) {
-    box.innerHTML = "<i>No users yet.</i>";
-    return;
-  }
-
-  box.innerHTML = "";
-
-  snap.forEach(child => {
-    const uid = child.key;
-    const d = child.val();
-
-    box.innerHTML += `
-      <div class="userBox">
-        <b>${d.username}</b> ${d.isAdmin ? "(Admin)" : ""}<br>
-        UID: ${uid}<br>
-        Packs Opened: ${d.stats?.packsOpened || 0}<br>
-        Messages Sent: ${d.stats?.messagesSent || 0}<br>
-      </div>
-    `;
-  });
-}
-
-/* GAMESTATE */
-async function loadGameState(){
-  const snap = await get(ref(db, "gameState"));
-  const data = snap.exists() ? snap.val() : {};
-
-  document.getElementById("globalMultiplier").value = data.globalMultiplier || 1;
-  document.getElementById("gameStateBox").textContent = JSON.stringify(data, null, 2);
-}
-
-window.saveGameState = async function(){
-  await update(ref(db, "gameState"), {
-    globalMultiplier: Number(document.getElementById("globalMultiplier").value)
-  });
-
-  showAlert("Game state updated!", true);
-  loadGameState();
-};
 </script>
 
 </body>
