@@ -1,37 +1,38 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Goldet — Admin Panel</title>
-<link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet"/>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Goldet Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet" />
 <style>
-  /* Goldet admin styling (compact) */
   *{box-sizing:border-box}
-  body,html{height:100%;margin:0;font-family:Arial,system-ui;background:#030303;color:#fff}
-  .sidebar{
-    position:fixed;left:0;top:0;bottom:0;width:240px;
-    background: linear-gradient(180deg,#1a1200,#2e1a03);
-    border-right:2px solid rgba(212,175,55,0.06);
-    padding:22px;display:flex;flex-direction:column;gap:12px;
-  }
+  html,body{height:100%;margin:0;font-family:Arial,system-ui;background:#030303;color:#fff}
+  .sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;background: linear-gradient(180deg,#1a1200,#2e1a03);border-right: 2px solid rgba(212,175,55,0.06);padding:22px;display:flex;flex-direction:column;gap:12px;}
   .logo{font-family:'Titan One',cursive;color:#ffd700;font-size:34px;text-shadow:0 0 8px rgba(212,175,55,0.15)}
-  .nav a, .nav button{display:block;color:#ffd;text-decoration:none;padding:10px;border-radius:8px;margin:6px 0;background:transparent;border:none;cursor:pointer;text-align:left}
-  .main{margin-left:260px;padding:24px;min-height:100vh;background:linear-gradient(180deg,#050505,#0b0b0b)}
-  h1{font-family:'Titan One',cursive;color:#ffdf80;margin:0 0 14px}
-  .row{display:flex;gap:16px;align-items:flex-start}
-  .card{background:#0f0f0f;border:1px solid rgba(212,175,55,0.08);padding:14px;border-radius:10px;flex:1}
-  input,select,textarea{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(212,175,55,0.06);background:#121212;color:#ffd;outline:none;margin-top:6px}
-  .btn{background:linear-gradient(90deg,#ffd700,#b8860b);border:none;padding:10px 12px;border-radius:8px;color:#070707;font-weight:800;cursor:pointer}
-  .btn.ghost{background:transparent;border:1px solid rgba(212,175,55,0.08);color:#ffd}
+  .nav a{display:block;color:#ffd;text-decoration:none;padding:10px;border-radius:8px;margin:6px 0;background:transparent}
+  .main{margin-left:260px;padding:30px;min-height:100vh;background:linear-gradient(180deg,#050505,#0b0b0b)}
+  h1{font-family:'Titan One',cursive;color:#ffdf80;margin:0 0 12px}
+  label{display:block;margin:8px 0 6px;color:#f6e6b4;font-weight:700}
+  input[type=text], input[type=password], select, textarea {
+    width:100%;padding:10px;border-radius:8px;border:1px solid rgba(212,175,55,0.12);
+    background:#0f0f0f;color:#ffefb6;font-size:16px;outline:none;
+  }
+  .buttons-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
+  button{background:linear-gradient(90deg,#ffd700,#b8860b);border:none;padding:10px 12px;border-radius:8px;color:#070707;font-weight:700;cursor:pointer}
+  button.ghost{background:transparent;border:2px solid rgba(212,175,55,0.12);color:#ffd}
+  .alert{padding:12px;border-radius:10px;margin-top:12px;display:none}
+  .request-list, .users-list{margin-top:10px; max-height:350px; overflow:auto}
+  .request, .user-row{background:rgba(255,255,255,0.03);border:1px solid rgba(212,175,55,0.06);padding:12px;margin-bottom:10px;border-radius:8px}
+  .request b{color:#ffd700}
+  .admin-box{background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
   .small{font-size:13px;color:#d9c08c}
-  .alert{padding:10px;border-radius:8px;margin-top:10px;display:none}
-  .request{background:rgba(255,255,255,0.03);border:1px solid rgba(212,175,55,0.06);padding:10px;margin-bottom:10px;border-radius:8px}
-  .list {max-height:420px;overflow:auto;padding-right:6px}
-  label{font-weight:700;color:#f6e6b4}
-  .field-row{display:flex;gap:8px}
-  .field-row > *{flex:1}
-  code{background:rgba(0,0,0,0.3);padding:4px;border-radius:4px}
+  .right{display:flex;gap:8px}
+  .flex{display:flex;gap:12px;align-items:center}
+  .hidden{display:none}
+  textarea{min-height:80px}
+  .two-col{display:grid;grid-template-columns:1fr 340px;gap:18px}
+  @media (max-width:1000px){ .two-col{grid-template-columns:1fr} .main{padding:16px; margin-left:0} .sidebar{position:relative;width:100%;height:auto;display:flex;flex-direction:row;overflow:auto} }
 </style>
 </head>
 <body>
@@ -45,472 +46,465 @@
     <a href="market.html">Market</a>
     <a href="golds.html">Golds</a>
     <a href="settings.html">Settings</a>
-    <button id="signOutBtn" class="ghost">Sign out</button>
+    <a href="#" id="signOutLink" class="hidden">Logout</a>
   </nav>
 </div>
 
 <div class="main">
   <div style="display:flex;justify-content:space-between;align-items:center">
     <div>
-      <h1>Admin Panel</h1>
-      <div class="small">Approve accounts, edit users, manage golds & chat. All changes update Realtime DB immediately.</div>
+      <h1>Admin Panel — Account Requests & Controls</h1>
+      <div class="small">Approve/decline signups, edit users, manage game state and golds. All changes update Realtime DB instantly.</div>
     </div>
-    <div id="adminBox" class="card" style="min-width:320px;max-width:420px">
-      <div id="adminStatus">Checking auth...</div>
-      <div id="adminControls" style="margin-top:10px;display:none">
-        <div class="small">Signed in as <b id="adminName"></b></div>
+
+    <!-- admin auth / info -->
+    <div class="admin-box" id="adminBox">
+      <div id="authForm">
+        <label>Admin email</label>
+        <input id="adminEmail" type="text" placeholder="you@example.com">
+        <label>Password</label>
+        <input id="adminPass" type="password" placeholder="password">
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button id="adminSignInBtn">Sign in</button>
+          <button id="adminCreateBtn" class="ghost" title="Create auth account (console recommended)">Create account</button>
+        </div>
+        <div class="small" style="margin-top:8px">Sign in with an Auth account that will be verified as admin in the DB.</div>
+      </div>
+
+      <div id="adminInfo" class="hidden">
+        <div class="small">Signed in as <b id="adminEmailText"></b></div>
+        <div style="margin-top:8px">
+          <button id="signOutBtn" class="ghost">Sign out</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <hr style="border:none;height:16px">
+  <hr style="border:none;height:14px">
 
-  <div class="row">
-    <!-- Requests -->
-    <div class="card" style="flex:0.75">
-      <h3>Pending Requests</h3>
-      <div class="small">Showing both <code>pendingUsers/</code> and <code>forms/</code> entries</div>
-      <div id="requestList" class="list" style="margin-top:10px">Loading…</div>
-      <div id="reqAlert" class="alert"></div>
+  <div class="two-col">
+    <div>
+
+      <section>
+        <h2 style="margin-top:0">Pending Signups</h2>
+        <div id="request-list" class="request-list">Loading…</div>
+        <div id="requestsAlert" class="alert"></div>
+      </section>
+
+      <section style="margin-top:18px">
+        <h2>All Users (editable)</h2>
+        <div id="users-list" class="users-list">Loading…</div>
+        <div id="usersAlert" class="alert"></div>
+      </section>
     </div>
 
-    <!-- Editor -->
-    <div class="card" style="flex:0.9">
-      <h3>Edit / Inspect User</h3>
-      <div class="small">Load a user (by UID) and edit any field — saves to Realtime DB instantly.</div>
+    <aside>
+      <section>
+        <h2 style="margin-top:0">Game Controls</h2>
+        <label>Announcements</label>
+        <textarea id="announcements"></textarea>
+        <label style="margin-top:8px">Event Active</label>
+        <select id="eventActive"><option value="false">false</option><option value="true">true</option></select>
 
-      <label>UID</label>
-      <div class="field-row" style="margin-top:6px">
-        <input id="editUID" placeholder="Paste UID (or username -> lookup)"/>
-        <button id="loadUserBtn" class="btn">Load</button>
-      </div>
+        <label style="margin-top:8px">Global Multiplier</label>
+        <input id="globalMultiplier" type="text" placeholder="1">
 
-      <div id="userEditor" style="display:none;margin-top:12px">
-        <label>Username</label>
-        <input id="editUsername"/>
+        <label style="margin-top:8px">Maintenance Mode</label>
+        <select id="maintenanceMode"><option value="false">false</option><option value="true">true</option></select>
 
-        <label>Role</label>
-        <select id="editRole">
-          <option value="user">User</option>
-          <option value="admin">Admin</option>
-          <option value="moderator">Moderator</option>
-        </select>
-
-        <label>Tokens (gold)</label>
-        <input id="editTokens" type="number"/>
-
-        <label>Level</label>
-        <input id="editLevel" type="number"/>
-
-        <label>XP</label>
-        <input id="editXP" type="number"/>
-
-        <label>Packs Opened</label>
-        <input id="editPacks" type="number"/>
-
-        <label>Messages Sent</label>
-        <input id="editMessages" type="number"/>
-
-        <label>Chat Name Color</label>
-        <input id="editNameColor" placeholder="#ffffff"/>
-
-        <label>Chat Text Color</label>
-        <input id="editTextColor" placeholder="#000000"/>
-
-        <label>Badges (JSON)</label>
-        <textarea id="editBadges" rows="3" placeholder='{"badge1":true}'></textarea>
-
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <button id="saveUserBtn" class="btn">Save changes</button>
-          <button id="deleteUserBtn" class="btn ghost">Delete user</button>
+        <div class="buttons-row" style="margin-top:8px">
+          <button id="saveGameStateBtn">Save Game State</button>
+          <button id="loadGameStateBtn" class="ghost">Reload</button>
         </div>
 
-        <div id="editorAlert" class="alert" style="margin-top:10px"></div>
-      </div>
+        <hr style="border:none;height:12px">
 
-    </div>
+        <h3>Add Custom Gold</h3>
+        <label>Gold name</label>
+        <input id="goldName" type="text" placeholder="Golden Taco">
+        <label>Image URL</label>
+        <input id="goldImage" type="text" placeholder="https://...png">
+        <label>Rarity</label>
+        <select id="goldRarity"><option>common</option><option>uncommon</option><option>rare</option><option>epic</option><option>legendary</option><option>chroma</option></select>
+        <div class="buttons-row" style="margin-top:8px">
+          <button id="addGoldBtn">Add Gold</button>
+          <button id="clearChatBtn" class="ghost">Clear Chat</button>
+        </div>
+        <div id="goldAlert" class="alert"></div>
+      </section>
+    </aside>
   </div>
-
-  <hr style="border:none;height:16px">
-
-  <div class="row">
-    <div class="card" style="flex:0.9">
-      <h3>Add Custom Gold</h3>
-      <label>Name</label>
-      <input id="goldName"/>
-      <label>Image URL</label>
-      <input id="goldImg"/>
-      <label>Rarity</label>
-      <select id="goldRarity">
-        <option value="common">Common</option>
-        <option value="uncommon">Uncommon</option>
-        <option value="rare">Rare</option>
-        <option value="epic">Epic</option>
-        <option value="legendary">Legendary</option>
-        <option value="chroma">Chroma</option>
-      </select>
-      <div style="margin-top:10px;display:flex;gap:8px">
-        <button id="addGoldBtn" class="btn">Add Gold</button>
-        <button id="clearChatBtn" class="btn ghost">Clear chat</button>
-      </div>
-      <div id="goldAlert" class="alert"></div>
-    </div>
-
-    <div class="card" style="flex:0.6">
-      <h3>Quick tools</h3>
-      <label>Lookup username → UID</label>
-      <input id="lookupName" placeholder="username"/>
-      <div style="margin-top:8px;display:flex;gap:8px">
-        <button id="lookupBtn" class="btn">Lookup</button>
-        <button id="refreshReqBtn" class="btn ghost">Refresh requests</button>
-      </div>
-      <div id="lookupResult" class="small" style="margin-top:8px"></div>
-    </div>
-  </div>
-
 </div>
 
+<!-- Firebase modular imports -->
 <script type="module">
-/* Admin panel:
-   - Supports both pendingUsers/{uid} and forms/{uid}
-   - Admin authenticated with Firebase Auth (email/password)
-   - Admin must have users/{uid}.role === "admin"
-*/
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+  import {
+    getAuth,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import {
-  getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-import {
-  getDatabase, ref, onValue, get, set, update, remove, child
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+  import {
+    getDatabase,
+    ref,
+    onValue,
+    get,
+    set,
+    update,
+    remove
+  } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
-  authDomain: "goldet-504aa.firebaseapp.com",
-  databaseURL: "https://goldet-504aa-default-rtdb.firebaseio.com",
-  projectId: "goldet-504aa",
-  storageBucket: "goldet-504aa.appspot.com",
-  messagingSenderId: "36312610816",
-  appId: "1:36312610816:web:ded0576d78ebf1ceba00e5",
-  measurementId: "G-TTJNTC824V"
-};
+  // --- use your firebase config here (yours already shown earlier) ---
+  const firebaseConfig = {
+    apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
+    authDomain: "goldet-504aa.firebaseapp.com",
+    databaseURL: "https://goldet-504aa-default-rtdb.firebaseio.com",
+    projectId: "goldet-504aa",
+    storageBucket: "goldet-504aa.appspot.com",
+    messagingSenderId: "36312610816",
+    appId: "1:36312610816:web:ded0576d78ebf1ceba00e5",
+    measurementId: "G-TTJNTC824V"
+  };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getDatabase(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app);
 
-// UI refs
-const adminStatus = document.getElementById("adminStatus");
-const adminName = document.getElementById("adminName");
-const adminControls = document.getElementById("adminControls");
-const requestList = document.getElementById("requestList");
-const reqAlert = document.getElementById("reqAlert");
-const editorAlert = document.getElementById("editorAlert");
-const goldAlert = document.getElementById("goldAlert");
-const lookupResult = document.getElementById("lookupResult");
+  // UI refs
+  const authForm = document.getElementById("authForm");
+  const adminInfo = document.getElementById("adminInfo");
+  const adminEmailText = document.getElementById("adminEmailText");
+  const signOutBtn = document.getElementById("signOutBtn");
+  const signOutLink = document.getElementById("signOutLink");
 
-// sign-out button (sidebar)
-document.getElementById("signOutBtn").onclick = async () => {
-  await signOut(auth);
-  window.location.href = "login.html";
-};
+  const requestList = document.getElementById("request-list");
+  const requestsAlert = document.getElementById("requestsAlert");
+  const usersList = document.getElementById("users-list");
+  const usersAlert = document.getElementById("usersAlert");
 
-// small helpers
-function showAlert(el, msg, ok=false){
-  el.style.display = "block";
-  el.style.background = ok ? "rgba(40,180,40,0.12)" : "rgba(255,0,0,0.12)";
-  el.textContent = msg;
-  setTimeout(()=> el.style.display = "none", 4500);
-}
-function isObj(o){ return o && typeof o === 'object' && !Array.isArray(o); }
+  const announcementsEl = document.getElementById("announcements");
+  const eventActiveEl = document.getElementById("eventActive");
+  const globalMultiplierEl = document.getElementById("globalMultiplier");
+  const maintenanceModeEl = document.getElementById("maintenanceMode");
+  const saveGameStateBtn = document.getElementById("saveGameStateBtn");
+  const loadGameStateBtn = document.getElementById("loadGameStateBtn");
 
-// --- AUTH LISTENER ---
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    adminStatus.innerHTML = `
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <input id="adminUser" placeholder="admin username (no domain)" style="padding:8px;border-radius:6px;background:#0f0f0f;color:#ffd;border:1px solid rgba(212,175,55,0.06)">
-        <input id="adminPass" type="password" placeholder="password" style="padding:8px;border-radius:6px;background:#0f0f0f;color:#ffd;border:1px solid rgba(212,175,55,0.06)">
-        <div style="display:flex;gap:8px">
-          <button id="adminSignIn" class="btn">Sign in</button>
-        </div>
-        <div class="small">Sign in with the account you created (email = username@goldet.internal)</div>
-      </div>
-    `;
-    document.getElementById("adminSignIn").onclick = async () => {
-      const u = document.getElementById("adminUser").value.trim();
-      const p = document.getElementById("adminPass").value;
-      if (!u || !p) return showAlert(reqAlert, "Enter credentials.");
-      const email = `${u}@goldet.internal`;
-      try {
-        await signInWithEmailAndPassword(auth, email, p);
-        showAlert(reqAlert, "Signed in — verifying admin...", true);
-      } catch (e) {
-        console.error(e);
-        showAlert(reqAlert, "Sign-in failed: " + (e.message||e));
-      }
-    };
-    // still load requests in read-only mode so admins can see (but can't approve)
-    loadRequests(false);
-    adminControls.style.display = "none";
-    adminName.textContent = "";
-    return;
+  const goldNameEl = document.getElementById("goldName");
+  const goldImageEl = document.getElementById("goldImage");
+  const goldRarityEl = document.getElementById("goldRarity");
+  const addGoldBtn = document.getElementById("addGoldBtn");
+  const goldAlert = document.getElementById("goldAlert");
+
+  const clearChatBtn = document.getElementById("clearChatBtn");
+
+  // auth buttons
+  document.getElementById("adminSignInBtn").onclick = async () => {
+    const e = document.getElementById("adminEmail").value.trim();
+    const p = document.getElementById("adminPass").value;
+    if (!e || !p) return showAlert(requestsAlert, "Enter email + password");
+    try {
+      await signInWithEmailAndPassword(auth, e, p);
+      showAlert(requestsAlert, "Signed in — verifying admin...", true);
+    } catch (err) { console.error(err); showAlert(requestsAlert, "Sign-in failed: " + (err.message || err)); }
+  };
+  document.getElementById("adminCreateBtn").onclick = async () => {
+    const e = document.getElementById("adminEmail").value.trim();
+    const p = document.getElementById("adminPass").value;
+    if (!e || !p) return showAlert(requestsAlert, "Enter email + password");
+    try {
+      await createUserWithEmailAndPassword(auth, e, p);
+      showAlert(requestsAlert, "Auth user created — now set isAdmin in DB for this account.", true);
+    } catch (err) { console.error(err); showAlert(requestsAlert, "Create failed: " + (err.message || err)); }
+  };
+
+  signOutBtn.onclick = async () => { await signOut(auth); };
+
+  signOutLink.onclick = async () => { await signOut(auth); };
+
+  function showAlert(el, msg, success=false){
+    el.style.display = "block";
+    el.style.background = success ? "rgba(40,180,40,0.15)" : "rgba(255,0,0,0.12)";
+    el.textContent = msg;
+    setTimeout(()=> el.style.display = "none", 4000);
   }
 
-  // when user signed in, check if that uid has role=admin in /users/{uid}
-  const uid = user.uid;
-  const uSnap = await get(ref(db, `users/${uid}`));
-  if (!uSnap.exists() || (uSnap.val().role !== "admin" && uSnap.val().role !== "moderator")) {
-    // not admin -> sign out and warn
-    await signOut(auth);
-    alert("This account is not authorized as admin. Make sure user's role is set to 'admin' in /users/{uid}.");
-    loadRequests(false);
-    return;
-  }
-
-  // authorized
-  adminControls.style.display = "block";
-  adminName.textContent = uSnap.val().username || uid;
-  adminStatus.textContent = "Authorized admin";
-  loadRequests(true);
-});
-
-// --- LOAD REQUESTS (both paths) ---
-function loadRequests(enabled = false){
-  // merge two sources: pendingUsers/ and forms/
-  const pendingRef = ref(db, "pendingUsers");
-  const formsRef = ref(db, "forms");
-  // we'll re-render on any change to either
-  onValue(pendingRef, renderMerged);
-  onValue(formsRef, renderMerged);
-
-  async function renderMerged(){
-    const pSnap = await get(pendingRef);
-    const fSnap = await get(formsRef);
-    const p = pSnap.exists() ? pSnap.val() : {};
-    const f = fSnap.exists() ? fSnap.val() : {};
-
-    // Build unified list keyed by uid (prefer pendingUsers ids)
-    const map = {};
-    // pendingUsers expected keyed by uid
-    for (const uid in p) if (p[uid]) map[uid] = {uid, ...p[uid], source:"pendingUsers"};
-    // forms may be keyed by uid or by username — handle both
-    for (const key in f) {
-      if (!f[key]) continue;
-      // if f entry includes username + requestedAt etc. If key looks like uid (length>16), treat as uid
-      const uidKey = key;
-      if (!map[uidKey]) map[uidKey] = { uid: uidKey, ...f[key], source:"forms" };
-      else { /* merge fields if needed */ map[uidKey] = {...map[uidKey], ...f[key]}; }
-    }
-
-    // Render
-    requestList.innerHTML = "";
-    const keys = Object.keys(map).sort((a,b)=> (map[a].requestedAt||0) - (map[b].requestedAt||0));
-    if (keys.length === 0) {
-      requestList.innerHTML = "<div class='small'>No pending requests.</div>";
+  // ------------------- AUTH STATE -------------------
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      authForm.classList.remove("hidden");
+      adminInfo.classList.add("hidden");
+      signOutLink.classList.add("hidden");
+      requestList.innerHTML = "<div class='small'>Sign in as admin to manage requests.</div>";
+      loadPending(false);
+      loadUsers(false);
       return;
     }
-    for (const uid of keys) {
-      const r = map[uid];
-      if (!r || r.status === "approved" || r.status === "declined") continue;
-      const div = document.createElement("div");
-      div.className = "request";
-      div.innerHTML = `
-        <div style="display:flex;justify-content:space-between">
-          <div>
-            <b>${r.username||r.email||"(unknown)"}</b>
-            <div class="small">UID: <code style="font-size:12px">${uid}</code></div>
-            <div class="small">Age: ${r.age||"–"} — Discord: ${r.discord||"–"}</div>
-            <div style="margin-top:8px">${r.whyPlay||r.why||""}</div>
-            <div class="small" style="margin-top:6px">Source: ${r.source}</div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <button ${enabled ? "" : "disabled"} onclick="approve('${uid}')">Approve</button>
-            <button ${enabled ? "" : "disabled"} onclick="decline('${uid}')">Decline</button>
-            <button ${enabled ? "" : "disabled"} onclick="loadEditor('${uid}')">Open</button>
-          </div>
-        </div>
-      `;
-      requestList.appendChild(div);
+
+    // check admin privileges:
+    const uid = user.uid;
+    const userSnap = await get(ref(db, `users/${uid}`));
+    const userData = userSnap.exists() ? userSnap.val() : null;
+
+    // Two ways to be admin:
+    // 1) users/{uid}.isAdmin === true
+    // 2) /admin/{username} === true
+    let isAdmin = false;
+    let username = userData?.username ?? null;
+    if (userData?.isAdmin === true) isAdmin = true;
+    if (!isAdmin && username) {
+      const adminSnap = await get(ref(db, `admin/${username}`));
+      if (adminSnap.exists() && adminSnap.val() === true) isAdmin = true;
     }
+
+    if (!isAdmin) {
+      // not an admin
+      await signOut(auth); // sign out to prevent unauthorized access
+      showAlert(requestsAlert, "This account is not authorized as admin.");
+      requestList.innerHTML = "<div class='small'>Account not authorized.</div>";
+      return;
+    }
+
+    // show admin UI
+    authForm.classList.add("hidden");
+    adminInfo.classList.remove("hidden");
+    adminEmailText.textContent = user.email || username || uid;
+    signOutLink.classList.remove("hidden");
+
+    // load live
+    loadPending(true);
+    loadUsers(true);
+    loadGameState();
+  });
+
+  // ------------------- PENDING USERS -------------------
+  // Load pendingusers; if enabled==true show Approve/Decline buttons
+  function loadPending(enabled = false) {
+    const pendingRef = ref(db, "pendingusers");
+    onValue(pendingRef, (snap) => {
+      const data = snap.val() || {};
+      requestList.innerHTML = "";
+      let found = 0;
+      Object.entries(data).forEach(([uid, form]) => {
+        if (!form) return;
+        found++;
+        const div = document.createElement("div");
+        div.className = "request";
+        div.innerHTML = `
+          <div style="display:flex;justify-content:space-between;gap:12px">
+            <div style="flex:1">
+              <b>${escapeHtml(form.username ?? "unknown")}</b> <span class="small">(${uid})</span>
+              <div class="small">Age: ${escapeHtml(String(form.age||"—"))} • Discord: ${escapeHtml(form.discord||"—")}</div>
+              <div style="margin-top:8px">${escapeHtml(form.whyPlay||"")}</div>
+              <div class="small" style="margin-top:6px">Status: ${escapeHtml(form.status||"pending")}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+              <div class="right">
+                <button ${enabled ? "" : "disabled"} onclick="approvePending('${uid}')">Approve</button>
+                <button ${enabled ? "" : "disabled"} onclick="declinePending('${uid}')">Decline</button>
+              </div>
+            </div>
+          </div>
+        `;
+        requestList.appendChild(div);
+      });
+      if (!found) requestList.innerHTML = "<div class='small'>No pending requests.</div>";
+    });
   }
-}
 
-// expose functions for inline onclick
-window.approve = async function(uid){
-  try {
-    // Read form/pending to gather username and extras
-    const formSnap = await get(ref(db, `pendingUsers/${uid}`));
-    const form2 = formSnap.exists() ? formSnap.val() : null;
-    const altSnap = await get(ref(db, `forms/${uid}`));
-    const form3 = altSnap.exists() ? altSnap.val() : null;
-    const data = form2 || form3;
-    if (!data) return showAlert(reqAlert, "Request not found.");
+  // Approve pending user: create users/{uid} starter and set status
+  window.approvePending = async function(uid) {
+    try {
+      const formSnap = await get(ref(db, `pendingusers/${uid}`));
+      if (!formSnap.exists()) return showAlert(requestsAlert, "Pending form not found.");
+      const f = formSnap.val();
 
-    // Create starter user at /users/{uid}
-    const starter = {
-      username: data.username || data.email?.split("@")[0] || ("user_"+Date.now()),
-      role: "user",
-      level: 1,
-      xp: 0,
-      tokens: 0,
-      goldsUnlocked: 0,
-      totalGolds: 0,
-      packsOpened: 0,
-      messages: 0,
-      badges: {},
-      chatColor: { name:"#ffffff", text:"#000000" },
-      createdAt: Date.now()
-    };
-    await set(ref(db, `users/${uid}`), starter);
-    // remove pending entry(s) and mark forms if present
-    await remove(ref(db, `pendingUsers/${uid}`)).catch(()=>{});
-    await update(ref(db, `forms/${uid}`), { status: "approved" }).catch(()=>{});
-    showAlert(reqAlert, `Approved ${starter.username}`, true);
-  } catch (e) {
-    console.error(e);
-    showAlert(reqAlert, "Approve failed: " + (e.message||e));
-  }
-};
+      // Starter user structure
+      const starter = {
+        username: f.username || ("user_" + uid.slice(0,6)),
+        isAdmin: false,
+        approved: true,
+        chatColor: { name: "#ffffff", text: "#000000" },
+        badges: {},
+        stats: {
+          golds: {},
+          packsOpened: 0,
+          messagesSent: 0
+        },
+        createdAt: Date.now()
+      };
 
-window.decline = async function(uid){
-  try {
-    // mark declined (prefer forms path) and remove pendingUsers
-    await update(ref(db, `forms/${uid}`), { status: "declined" }).catch(()=>{});
-    await remove(ref(db, `pendingUsers/${uid}`)).catch(()=>{});
-    showAlert(reqAlert, "Declined request");
-  } catch (e) {
-    console.error(e);
-    showAlert(reqAlert, "Decline failed: " + (e.message||e));
-  }
-};
+      // write user and mark pending as approved
+      await set(ref(db, `users/${uid}`), starter);
+      await update(ref(db, `pendingusers/${uid}`), { status: "approved", approvedAt: Date.now() });
 
-// --- EDITOR functions ---
-const loadUserBtn = document.getElementById("loadUserBtn");
-const editUID = document.getElementById("editUID");
-const userEditor = document.getElementById("userEditor");
-loadUserBtn.onclick = async () => {
-  const key = editUID.value.trim();
-  if (!key) return showAlert(editorAlert, "Enter UID.");
-  await loadEditor(key);
-};
+      showAlert(requestsAlert, `Approved ${starter.username}`, true);
+    } catch (e) {
+      console.error(e);
+      showAlert(requestsAlert, "Approve failed: " + (e.message || e));
+    }
+  };
 
-window.loadEditor = async function(uid){
-  try {
-    // If they passed a username, try lookup in usernames map
-    let uidFinal = uid;
-    const maybe = await get(ref(db, `usernames/${uid}`));
-    if (maybe.exists()) uidFinal = maybe.val();
+  window.declinePending = async function(uid) {
+    try {
+      const formSnap = await get(ref(db, `pendingusers/${uid}`));
+      if (!formSnap.exists()) return showAlert(requestsAlert, "Pending form not found.");
+      const f = formSnap.val();
 
-    const snap = await get(ref(db, `users/${uidFinal}`));
-    if (!snap.exists()) return showAlert(editorAlert, "User not found: " + uidFinal);
-    const d = snap.val();
+      // set declined status and optionally remove after
+      await update(ref(db, `pendingusers/${uid}`), { status: "declined", declinedAt: Date.now() });
 
-    document.getElementById("editUsername").value = d.username || "";
-    document.getElementById("editRole").value = d.role || "user";
-    document.getElementById("editTokens").value = d.tokens ?? 0;
-    document.getElementById("editLevel").value = d.level ?? 1;
-    document.getElementById("editXP").value = d.xp ?? 0;
-    document.getElementById("editPacks").value = d.packsOpened ?? 0;
-    document.getElementById("editMessages").value = d.messages ?? 0;
-    document.getElementById("editNameColor").value = (d.chatColor && d.chatColor.name) || "#ffffff";
-    document.getElementById("editTextColor").value = (d.chatColor && d.chatColor.text) || "#000000";
-    document.getElementById("editBadges").value = JSON.stringify(d.badges || {});
-    userEditor.style.display = "block";
-    // store current editing uid
-    userEditor.dataset.editingUid = uidFinal;
-  } catch (e) {
-    console.error(e);
-    showAlert(editorAlert, "Load failed: " + (e.message||e));
-  }
-};
-
-document.getElementById("saveUserBtn").onclick = async () => {
-  try {
-    const uid = userEditor.dataset.editingUid;
-    if (!uid) return showAlert(editorAlert, "No user loaded.");
-    const updateObj = {
-      username: document.getElementById("editUsername").value.trim(),
-      role: document.getElementById("editRole").value,
-      tokens: Number(document.getElementById("editTokens").value) || 0,
-      level: Number(document.getElementById("editLevel").value) || 1,
-      xp: Number(document.getElementById("editXP").value) || 0,
-      packsOpened: Number(document.getElementById("editPacks").value) || 0,
-      messages: Number(document.getElementById("editMessages").value) || 0,
-      chatColor: {
-        name: document.getElementById("editNameColor").value || "#ffffff",
-        text: document.getElementById("editTextColor").value || "#000000"
+      // if username reservation exists (usernames/{username} -> uid), remove it
+      if (f.username) {
+        const nameSnap = await get(ref(db, `usernames/${f.username}`));
+        if (nameSnap.exists() && nameSnap.val() === uid) {
+          await remove(ref(db, `usernames/${f.username}`)).catch(()=>{});
+        }
       }
-    };
-    // badges parse
-    try { updateObj.badges = JSON.parse(document.getElementById("editBadges").value || "{}"); }
-    catch(e){ return showAlert(editorAlert, "Badges JSON invalid."); }
 
-    await update(ref(db, `users/${uid}`), updateObj);
-    showAlert(editorAlert, "Saved.", true);
-  } catch (e) {
-    console.error(e);
-    showAlert(editorAlert, "Save failed: " + (e.message||e));
+      showAlert(requestsAlert, `Declined ${f.username||uid}`);
+    } catch (e) {
+      console.error(e);
+      showAlert(requestsAlert, "Decline failed: " + (e.message || e));
+    }
+  };
+
+  // ------------------- USERS LIST & EDIT -------------------
+  // loadUsers(enabled) - show list of users and allow edit if enabled
+  function loadUsers(enabled = false) {
+    const usersRef = ref(db, "users");
+    onValue(usersRef, (snap) => {
+      const data = snap.val() || {};
+      usersList.innerHTML = "";
+      let found = 0;
+      Object.entries(data).forEach(([uid, u]) => {
+        found++;
+        const div = document.createElement("div");
+        div.className = "user-row";
+        div.innerHTML = `
+          <div style="display:flex;justify-content:space-between;gap:12px">
+            <div style="flex:1">
+              <b>${escapeHtml(u.username || ("uid:"+uid.slice(0,6)))}</b> <span class="small">(${uid})</span>
+              <div class="small">Approved: ${u.approved ? "yes":"no"} • isAdmin: ${u.isAdmin? "yes":"no"}</div>
+              <div style="margin-top:8px">Stats: packs ${u.stats?.packsOpened||0} • messages ${u.stats?.messagesSent||0}</div>
+            </div>
+            <div style="width:300px">
+              <div style="display:flex;gap:6px;margin-bottom:6px">
+                <input placeholder="username" value="${escapeHtml(u.username||'')}" data-uid="${uid}" data-field="username" class="edit-input" />
+                <input placeholder="isAdmin:true/false" value="${u.isAdmin? 'true':'false'}" data-uid="${uid}" data-field="isAdmin" class="edit-input" />
+              </div>
+              <div style="display:flex;gap:6px;margin-bottom:6px">
+                <input placeholder="packsOpened" value="${(u.stats?.packsOpened||0)}" data-uid="${uid}" data-field="packsOpened" class="edit-input" />
+                <input placeholder="messagesSent" value="${(u.stats?.messagesSent||0)}" data-uid="${uid}" data-field="messagesSent" class="edit-input" />
+              </div>
+              <div style="display:flex;gap:6px">
+                <button ${enabled ? "" : "disabled"} onclick="saveUserEdits('${uid}', this)">Save</button>
+                <button ${enabled ? "" : "disabled"} onclick="deleteUser('${uid}')">Delete</button>
+                <button ${enabled ? "" : "disabled"} onclick="toggleApprove('${uid}')">${u.approved? 'Unapprove':'Approve'}</button>
+              </div>
+            </div>
+          </div>
+        `;
+        usersList.appendChild(div);
+      });
+      if (!found) usersList.innerHTML = "<div class='small'>No users found.</div>";
+    });
   }
-};
 
-document.getElementById("deleteUserBtn").onclick = async () => {
-  if (!confirm("Delete user record permanently? This cannot be undone.")) return;
-  const uid = userEditor.dataset.editingUid;
-  if (!uid) return showAlert(editorAlert, "No user loaded.");
-  try {
-    await remove(ref(db, `users/${uid}`));
-    showAlert(editorAlert, "Deleted.", true);
-    userEditor.style.display = "none";
-  } catch (e) {
-    console.error(e);
-    showAlert(editorAlert, "Delete failed: " + (e.message||e));
+  window.saveUserEdits = async function(uid, btn) {
+    try {
+      // find inputs inside the same user-row
+      const row = btn.closest(".user-row");
+      const inputs = row.querySelectorAll(".edit-input");
+      const updates = {};
+      const statsUpdates = {};
+      for (const inp of inputs) {
+        const field = inp.dataset.field;
+        const val = inp.value.trim();
+        if (field === "username") updates.username = val;
+        else if (field === "isAdmin") updates.isAdmin = (val === "true");
+        else if (field === "packsOpened") statsUpdates.packsOpened = Number(val) || 0;
+        else if (field === "messagesSent") statsUpdates.messagesSent = Number(val) || 0;
+      }
+      if (Object.keys(statsUpdates).length) updates.stats = { ...( (await (await get(ref(db, `users/${uid}`))).val() || {}).stats || {} ), ...statsUpdates };
+      await update(ref(db, `users/${uid}`), updates);
+      showAlert(usersAlert, "Saved user edits", true);
+    } catch (e) { console.error(e); showAlert(usersAlert, "Save failed: " + (e.message || e)); }
+  };
+
+  window.deleteUser = async function(uid) {
+    if (!confirm("Delete user and their data? This cannot be undone.")) return;
+    try {
+      await remove(ref(db, `users/${uid}`));
+      showAlert(usersAlert, "User deleted", true);
+    } catch (e) { console.error(e); showAlert(usersAlert, "Delete failed: "+(e.message||e)); }
+  };
+
+  window.toggleApprove = async function(uid) {
+    try {
+      const uSnap = await get(ref(db, `users/${uid}`));
+      if (!uSnap.exists()) return showAlert(usersAlert, "User not found");
+      const u = uSnap.val();
+      await update(ref(db, `users/${uid}`), { approved: !u.approved });
+      showAlert(usersAlert, (u.approved ? "Unapproved":"Approved") + " user", true);
+    } catch (e) { console.error(e); showAlert(usersAlert, "Toggle failed: "+(e.message||e)); }
+  };
+
+  // ------------------- GAME STATE -------------------
+  async function loadGameState() {
+    const gSnap = await get(ref(db, "gameState"));
+    const g = gSnap.exists() ? gSnap.val() : {};
+    announcementsEl.value = g.announcements || "";
+    eventActiveEl.value = String(g.eventActive || false);
+    globalMultiplierEl.value = String(g.globalMultiplier ?? 1);
+    maintenanceModeEl.value = String(g.maintenanceMode || false);
   }
-};
+  saveGameStateBtn.onclick = async () => {
+    try {
+      await set(ref(db, "gameState"), {
+        announcements: announcementsEl.value,
+        eventActive: eventActiveEl.value === "true",
+        globalMultiplier: Number(globalMultiplierEl.value) || 1,
+        maintenanceMode: maintenanceModeEl.value === "true"
+      });
+      showAlert(goldAlert, "Saved game state", true);
+    } catch (e) { console.error(e); showAlert(goldAlert, "Save failed: "+(e.message||e)); }
+  };
+  loadGameStateBtn.onclick = loadGameState;
 
-// add gold
-document.getElementById("addGoldBtn").onclick = async () => {
-  const name = document.getElementById("goldName").value.trim();
-  const img = document.getElementById("goldImg").value.trim();
-  const rarity = document.getElementById("goldRarity").value;
-  if (!name || !img) return showAlert(goldAlert, "Enter name + image.");
-  const key = name.replace(/\./g,'_');
-  try {
-    await set(ref(db, `golds/${key}`), { name, img, rarity, createdAt: Date.now() });
-    showAlert(goldAlert, "Added gold.", true);
-    document.getElementById("goldName").value = "";
-    document.getElementById("goldImg").value = "";
-  } catch (e) {
-    console.error(e);
-    showAlert(goldAlert, "Add gold failed.");
+  // ------------------- ADD GOLD / CLEAR CHAT -------------------
+  addGoldBtn.onclick = async () => {
+    const name = goldNameEl.value.trim();
+    const img = goldImageEl.value.trim();
+    const rarity = goldRarityEl.value;
+    if (!name) return showAlert(goldAlert, "Enter name");
+    if (!img) return showAlert(goldAlert, "Enter image URL");
+    const safe = name.replace(/\./g, "_");
+    try {
+      await set(ref(db, `golds/${safe}`), { name, img, rarity, createdAt: Date.now() });
+      showAlert(goldAlert, "Gold added", true);
+      goldNameEl.value = ""; goldImageEl.value = "";
+    } catch (e) { console.error(e); showAlert(goldAlert, "Add failed: "+(e.message||e)); }
+  };
+
+  clearChatBtn.onclick = async () => {
+    if (!confirm("Clear ALL chat messages? This will remove messages/ from DB.")) return;
+    try {
+      await remove(ref(db, "messages"));
+      showAlert(goldAlert, "Chat cleared", true);
+    } catch (e) { console.error(e); showAlert(goldAlert, "Clear failed."); }
+  };
+
+  // ------------------- UTIL -------------------
+  function escapeHtml(s) {
+    return String(s || "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
-};
 
-// clear chat
-document.getElementById("clearChatBtn").onclick = async () => {
-  if (!confirm("Clear ALL chat messages?")) return;
-  try {
-    await remove(ref(db, "messages"));
-    showAlert(goldAlert, "Chat cleared.", true);
-  } catch (e) {
-    console.error(e);
-    showAlert(goldAlert, "Clear failed.");
-  }
-};
-
-// lookup username -> uid
-document.getElementById("lookupBtn").onclick = async () => {
-  const uname = document.getElementById("lookupName").value.trim();
-  if (!uname) return showAlert(lookupResult, "Enter username.");
-  const snap = await get(ref(db, `usernames/${uname}`));
-  if (!snap.exists()) return showAlert(lookupResult, "Not found.");
-  showAlert(lookupResult, `UID: ${snap.val()}`, true);
-  lookupResult.textContent = `UID: ${snap.val()}`;
-};
-
-// refresh requests
-document.getElementById("refreshReqBtn").onclick = () => loadRequests(true);
+  // initial non-auth load
+  loadPending(false);
+  loadUsers(false);
 
 </script>
 </body>
