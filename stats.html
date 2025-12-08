@@ -1,267 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Goldet | Stats</title>
-<link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Goldet — Your Stats</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet" />
 
 <style>
-  /* PAGE BACKGROUND */
-  body {
-    margin: 0;
-    background: #050505;
-    font-family: Arial, system-ui;
-    color: #ffeaa7;
-    display: flex;
+  *{box-sizing:border-box}
+  html,body{
+    margin:0;
+    padding:0;
+    height:100%;
+    font-family:Arial,system-ui;
+    background:linear-gradient(180deg,#050505,#0b0b0b);
+    color:#fff;
   }
 
-  /* SIDEBAR (same as admin panel) */
-  .sidebar {
-    width: 260px;
-    height: 100vh;
-    background: #0a0a0a;
-    border-right: 2px solid rgba(212,175,55,0.15);
-    padding: 22px;
-    position: fixed;
+  /* SIDEBAR — same as admin */
+  .sidebar{
+    position:fixed;left:0;top:0;bottom:0;width:240px;
+    background: linear-gradient(180deg,#1a1200,#2e1a03);
+    border-right: 2px solid rgba(212,175,55,0.06);
+    padding:22px;display:flex;flex-direction:column;gap:12px;
   }
-
-  .logo {
-    font-family: "Titan One";
-    font-size: 32px;
-    color: #ffd700;
-    text-align: center;
-    margin-bottom: 30px;
-    text-shadow: 0 0 12px rgba(255,215,0,0.4);
+  .logo{
+    font-family:'Titan One',cursive;
+    color:#ffd700;font-size:34px;
+    text-shadow:0 0 8px rgba(212,175,55,0.15);
   }
-
-  .sidebar ul {
-    list-style: none;
-    padding: 0;
+  .nav a{
+    display:block;color:#ffd;
+    text-decoration:none;padding:10px;
+    border-radius:8px;margin:6px 0;
+    background:transparent;
+    transition:0.2s;
   }
-
-  .sidebar ul li {
-    padding: 14px;
-    margin-bottom: 6px;
-    border-radius: 10px;
-    background: #111;
-    border: 1px solid rgba(212,175,55,0.1);
-    cursor: pointer;
-    transition: 0.2s;
-  }
-
-  .sidebar ul li:hover {
-    background: rgba(212,175,55,0.15);
-  }
+  .nav a:hover{background:rgba(212,175,55,0.06)}
 
   /* MAIN CONTENT */
-  .main {
-    margin-left: 260px;
-    padding: 30px;
-    width: calc(100% - 260px);
+  .main{
+    margin-left:260px;
+    padding:30px;
+    min-height:100vh;
+  }
+  h1{
+    font-family:'Titan One',cursive;
+    color:#ffdf80;margin:0 0 20px;
   }
 
-  /* PROFILE CARD */
-  .profile-card {
-    background: #0f0f0f;
-    border: 2px solid rgba(212,175,55,0.12);
-    padding: 20px;
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 6px 24px rgba(212,175,55,0.06);
+  .stats-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
   }
 
-  .avatar {
-    width: 95px;
-    height: 95px;
-    background: linear-gradient(120deg, #ffd700, #9e7d00);
-    border-radius: 50%;
-    box-shadow: 0 0 12px rgba(255,215,0,0.5);
+  .stat-box{
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(212,175,55,0.06);
+    border-radius:12px;
+    padding:18px;
+    text-align:center;
+  }
+  .stat-title{
+    font-size:18px;
+    color:#f6e6b4;
+    margin-bottom:6px;
+  }
+  .stat-value{
+    font-size:32px;
+    font-weight:700;
+    color:#ffd700;
   }
 
-  .profile-info {
-    flex-grow: 1;
-    padding-left: 20px;
+  #logoutBtn{
+    margin-top:10px;
+    padding:10px;
+    border-radius:8px;
+    border:none;
+    background:linear-gradient(90deg,#ffd700,#b8860b);
+    color:#070707;
+    font-weight:700;
+    cursor:pointer;
   }
 
-  .username {
-    font-family: "Titan One";
-    font-size: 28px;
-    color: #ffd700;
-    margin: 0 0 8px;
-  }
-
-  .level-bar {
-    width: 100%;
-    height: 14px;
-    background: #1a1a1a;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid rgba(212,175,55,0.15);
-  }
-
-  .bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #ffd700, #b8860b);
-    width: 0%;
-    transition: width 0.3s;
-  }
-
-  .level-text {
-    margin-top: 6px;
-    font-size: 16px;
-    color: #ffe49d;
-  }
-
-  .btn {
-    padding: 10px 16px;
-    border-radius: 10px;
-    border: none;
-    background: linear-gradient(90deg, #ffd700, #b8860b);
-    color: #080808;
-    font-weight: bold;
-    cursor: pointer;
-  }
-
-  /* STATS ROW */
-  .stats-row {
-    margin-top: 30px;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 18px;
-  }
-
-  .stat-box {
-    background: #0f0f0f;
-    border: 2px solid rgba(212,175,55,0.12);
-    padding: 20px;
-    border-radius: 14px;
-    text-align: center;
-    box-shadow: 0 6px 24px rgba(212,175,55,0.06);
-  }
-
-  .stat-title {
-    color: #ffe49d;
-    font-size: 16px;
-    margin-bottom: 6px;
-  }
-
-  .stat-value {
-    font-size: 26px;
-    color: #ffd700;
-    font-weight: bold;
-  }
-
-  /* FRIENDS + REQUESTS */
-  .section-title {
-    margin-top: 40px;
-    font-family: "Titan One";
-    color: #ffd700;
-    font-size: 26px;
-  }
-
-  .friends-grid, .requests-grid {
-    margin-top: 14px;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
-  }
-
-  .friend-card, .request-card {
-    height: 110px;
-    background: #111;
-    border-radius: 12px;
-    border: 1px solid rgba(212,175,55,0.12);
+  @media(max-width:900px){
+    .sidebar{
+      position:relative;
+      width:100%;
+      height:auto;
+      display:flex;
+      flex-direction:row;
+      overflow:auto;
+    }
+    .main{margin-left:0;padding:16px}
   }
 </style>
 </head>
-
 <body>
 
 <!-- SIDEBAR -->
 <div class="sidebar">
-  <h2 class="logo">Goldet</h2>
-
-  <ul>
-    <li onclick="location.href='stats.html'">Stats</li>
-    <li onclick="location.href='leaderboard.html'">Leaderboard</li>
-    <li onclick="location.href='chat.html'">Chat</li>
-    <li onclick="location.href='clans.html'">Clans</li>
-    <li onclick="location.href='market.html'">Market</li>
-    <li onclick="location.href='items.html'">Items</li>
-    <li onclick="location.href='settings.html'">Settings</li>
-    <li onclick="location.href='news.html'">News</li>
-  </ul>
+  <div class="logo">Goldet</div>
+  <nav class="nav">
+    <a href="stats.html">Stats</a>
+    <a href="leaderboard.html">Leaderboard</a>
+    <a href="chat.html">Chat</a>
+    <a href="market.html">Market</a>
+    <a href="golds.html">Golds</a>
+    <a href="settings.html">Settings</a>
+    <a href="#" id="logoutBtn">Logout</a>
+  </nav>
 </div>
 
-<!-- MAIN CONTENT -->
+<!-- MAIN -->
 <div class="main">
+  <h1>Your Stats</h1>
 
-  <div class="profile-card">
-    <div class="avatar"></div>
-
-    <div class="profile-info">
-      <h2 class="username" id="usernameDisplay">YourName</h2>
-
-      <div class="level-bar">
-        <div class="bar-fill" id="xpBar"></div>
-      </div>
-
-      <p class="level-text" id="levelDisplay">Level 1</p>
-    </div>
-
-    <div class="profile-actions">
-      <button class="btn">View Stats</button>
-      <button class="btn">Trade</button>
-    </div>
-  </div>
-
-  <div class="stats-row">
+  <div class="stats-grid">
     <div class="stat-box">
-      <p class="stat-title">Gold</p>
-      <p class="stat-value" id="tokensDisplay">0</p>
+      <div class="stat-title">Your Name</div>
+      <div class="stat-value" id="usernameDisplay">Loading...</div>
     </div>
 
     <div class="stat-box">
-      <p class="stat-title">Golds Unlocked</p>
-      <p class="stat-value" id="goldsDisplay">0 / 0</p>
+      <div class="stat-title">Level</div>
+      <div class="stat-value" id="levelDisplay">0</div>
     </div>
 
     <div class="stat-box">
-      <p class="stat-title">Packs Opened</p>
-      <p class="stat-value" id="packsDisplay">0</p>
+      <div class="stat-title">XP</div>
+      <div class="stat-value" id="xpDisplay">0</div>
     </div>
 
     <div class="stat-box">
-      <p class="stat-title">Messages Sent</p>
-      <p class="stat-value" id="messagesDisplay">0</p>
+      <div class="stat-title">Golds Unlocked</div>
+      <div class="stat-value" id="goldsUnlockedDisplay">0</div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-title">Packs Opened</div>
+      <div class="stat-value" id="packsOpenedDisplay">0</div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-title">Messages Sent</div>
+      <div class="stat-value" id="messagesDisplay">0</div>
     </div>
   </div>
-
-  <h2 class="section-title">Friends</h2>
-  <div class="friends-grid">
-    <div class="friend-card"></div>
-    <div class="friend-card"></div>
-    <div class="friend-card"></div>
-    <div class="friend-card"></div>
-  </div>
-
-  <h2 class="section-title">Requests</h2>
-  <div class="requests-grid">
-    <div class="request-card"></div>
-    <div class="request-card"></div>
-    <div class="request-card"></div>
-  </div>
-
 </div>
 
-<!-- FIREBASE USER LOADER -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+  import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
@@ -275,33 +167,41 @@
   };
 
   const app = initializeApp(firebaseConfig);
-  const auth = getAuth();
-  const db = getDatabase();
+  const db = getDatabase(app);
 
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      document.getElementById("usernameDisplay").textContent = "Not Logged In";
-      return;
-    }
+  // ---------- LOGIN CHECK ----------
+  const currentUser = localStorage.getItem("currentUser");
 
-    const uid = user.uid;
-    const userRef = ref(db, "users/" + uid);
+  if (!currentUser) {
+    window.location.href = "login.html";
+  }
 
-    onValue(userRef, (snap) => {
-      const data = snap.val();
-      if (!data) return;
+  document.getElementById("usernameDisplay").textContent = currentUser;
 
-      document.getElementById("usernameDisplay").textContent = data.username ?? "Unknown";
-      document.getElementById("levelDisplay").textContent = "Level " + (data.level ?? 1);
-      document.getElementById("xpBar").style.width = (data.xp ?? 0) + "%";
-      document.getElementById("tokensDisplay").textContent = data.tokens ?? 0;
-      document.getElementById("goldsDisplay").textContent =
-        (data.goldsUnlocked ?? 0) + " / " + (data.totalGolds ?? 0);
-      document.getElementById("packsDisplay").textContent = data.packsOpened ?? 0;
-      document.getElementById("messagesDisplay").textContent = data.messages ?? 0;
-    });
-  });
+  // ---------- LOGOUT ----------
+  document.getElementById("logoutBtn").onclick = () => {
+    localStorage.removeItem("currentUser");
+    window.location.href = "login.html";
+  };
+
+  // ---------- LOAD USER STATS ----------
+  async function loadStats() {
+    const userRef = ref(db, "users/" + currentUser);
+    const snap = await get(userRef);
+
+    if (!snap.exists()) return;
+
+    const d = snap.val();
+
+    document.getElementById("levelDisplay").textContent = d.level ?? 0;
+    document.getElementById("xpDisplay").textContent = d.xp ?? 0;
+    document.getElementById("goldsUnlockedDisplay").textContent = d.goldsUnlocked ?? 0;
+    document.getElementById("packsOpenedDisplay").textContent = d.packsOpened ?? 0;
+    document.getElementById("messagesDisplay").textContent = d.messages ?? 0;
+  }
+
+  loadStats();
 </script>
+
 </body>
 </html>
-
