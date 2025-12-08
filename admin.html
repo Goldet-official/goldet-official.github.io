@@ -1,103 +1,189 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Goldet — Admin Panel</title>
-<link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet"/>
 <style>
+  /* Goldet admin styling (compact) */
   *{box-sizing:border-box}
-  html,body{margin:0;height:100%;font-family:Arial,system-ui;background:#030303;color:#fff}
-  .sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;background: linear-gradient(180deg,#1a1200,#2e1a03);border-right: 2px solid rgba(212,175,55,0.06);padding:22px;display:flex;flex-direction:column;gap:12px}
+  body,html{height:100%;margin:0;font-family:Arial,system-ui;background:#030303;color:#fff}
+  .sidebar{
+    position:fixed;left:0;top:0;bottom:0;width:240px;
+    background: linear-gradient(180deg,#1a1200,#2e1a03);
+    border-right:2px solid rgba(212,175,55,0.06);
+    padding:22px;display:flex;flex-direction:column;gap:12px;
+  }
   .logo{font-family:'Titan One',cursive;color:#ffd700;font-size:34px;text-shadow:0 0 8px rgba(212,175,55,0.15)}
-  .nav a{display:block;color:#ffd;text-decoration:none;padding:10px;border-radius:8px;margin:6px 0;background:transparent}
-  .main{margin-left:260px;padding:30px;min-height:100vh}
-  h1{font-family:'Titan One',cursive;color:#ffdf80;margin:0 0 12px}
-  .panel{background:#0f0f0f;border:1px solid rgba(212,175,55,0.06);padding:12px;border-radius:10px}
-  .grid{display:grid;grid-template-columns:1fr 320px;gap:16px}
-  .request{background:rgba(255,255,255,0.02);padding:10px;border-radius:8px;margin-bottom:10px;border:1px solid rgba(212,175,55,0.04)}
-  input,select,textarea{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(212,175,55,0.06);background:#111;color:#ffd;margin-bottom:8px}
-  .btn{padding:8px 10px;border-radius:8px;border:none;background:linear-gradient(90deg,#ffd700,#b8860b);color:#070707;font-weight:800;cursor:pointer}
-  .ghost{background:transparent;border:2px solid rgba(212,175,55,0.12);color:#ffd;padding:8px;border-radius:8px}
-  .list{max-height:480px;overflow:auto;margin-top:10px}
-  .user-item{display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid rgba(255,255,255,0.02)}
-  .alert{padding:10px;border-radius:8px;display:none;margin-top:8px}
+  .nav a, .nav button{display:block;color:#ffd;text-decoration:none;padding:10px;border-radius:8px;margin:6px 0;background:transparent;border:none;cursor:pointer;text-align:left}
+  .main{margin-left:260px;padding:24px;min-height:100vh;background:linear-gradient(180deg,#050505,#0b0b0b)}
+  h1{font-family:'Titan One',cursive;color:#ffdf80;margin:0 0 14px}
+  .row{display:flex;gap:16px;align-items:flex-start}
+  .card{background:#0f0f0f;border:1px solid rgba(212,175,55,0.08);padding:14px;border-radius:10px;flex:1}
+  input,select,textarea{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(212,175,55,0.06);background:#121212;color:#ffd;outline:none;margin-top:6px}
+  .btn{background:linear-gradient(90deg,#ffd700,#b8860b);border:none;padding:10px 12px;border-radius:8px;color:#070707;font-weight:800;cursor:pointer}
+  .btn.ghost{background:transparent;border:1px solid rgba(212,175,55,0.08);color:#ffd}
+  .small{font-size:13px;color:#d9c08c}
+  .alert{padding:10px;border-radius:8px;margin-top:10px;display:none}
+  .request{background:rgba(255,255,255,0.03);border:1px solid rgba(212,175,55,0.06);padding:10px;margin-bottom:10px;border-radius:8px}
+  .list {max-height:420px;overflow:auto;padding-right:6px}
+  label{font-weight:700;color:#f6e6b4}
+  .field-row{display:flex;gap:8px}
+  .field-row > *{flex:1}
+  code{background:rgba(0,0,0,0.3);padding:4px;border-radius:4px}
 </style>
 </head>
 <body>
 
 <div class="sidebar">
   <div class="logo">Goldet</div>
-  <nav>
+  <nav class="nav">
     <a href="stats.html">Stats</a>
     <a href="leaderboard.html">Leaderboard</a>
     <a href="chat.html">Chat</a>
     <a href="market.html">Market</a>
     <a href="golds.html">Golds</a>
     <a href="settings.html">Settings</a>
+    <button id="signOutBtn" class="ghost">Sign out</button>
   </nav>
-  <div style="margin-top:auto">
-    <div id="adminInfo" style="font-size:14px;color:#d9c08c">Checking...</div>
-    <button id="signOutBtn" class="ghost" style="width:100%;margin-top:8px">Sign out</button>
-  </div>
 </div>
 
 <div class="main">
-  <h1>Admin Panel</h1>
-
-  <div class="grid">
+  <div style="display:flex;justify-content:space-between;align-items:center">
     <div>
-      <div class="panel">
-        <h3>Pending Signup Requests</h3>
-        <div id="requestsList" class="list">Loading…</div>
-        <div id="reqAlert" class="alert"></div>
-      </div>
-
-      <div class="panel" style="margin-top:12px">
-        <h3>All Users (live)</h3>
-        <div id="usersList" class="list">Loading…</div>
-        <div id="userAlert" class="alert"></div>
-      </div>
+      <h1>Admin Panel</h1>
+      <div class="small">Approve accounts, edit users, manage golds & chat. All changes update Realtime DB immediately.</div>
     </div>
-
-    <div>
-      <div class="panel">
-        <h3>Quick Actions</h3>
-        <label>Add Gold</label>
-        <input id="goldName" placeholder="Name">
-        <input id="goldImg" placeholder="Image URL">
-        <select id="goldRarity"><option>common</option><option>uncommon</option><option>rare</option><option>epic</option><option>legendary</option><option>chroma</option></select>
-        <button id="addGoldBtn" class="btn">Add gold</button>
-        <div id="goldAlert" class="alert"></div>
-      </div>
-
-      <div class="panel" style="margin-top:12px">
-        <h3>Selected User</h3>
-        <div id="selectedUserBox">No user selected</div>
-        <div style="margin-top:8px">
-          <label>Username</label><input id="selUsername">
-          <label>Role</label><select id="selRole"><option value="user">user</option><option value="admin">admin</option></select>
-          <label>Level</label><input id="selLevel" type="number" min="0">
-          <label>XP</label><input id="selXP" type="number" min="0">
-          <label>Golds Unlocked</label><input id="selGolds" type="number" min="0">
-          <label>Packs Opened</label><input id="selPacks" type="number" min="0">
-          <label>Messages Sent</label><input id="selMessages" type="number" min="0">
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <button id="saveUserBtn" class="btn">Save</button>
-            <button id="banUserBtn" class="ghost">Ban (set banned:true)</button>
-            <button id="deleteUserBtn" class="ghost">Delete user</button>
-          </div>
-          <div id="selectedAlert" class="alert"></div>
-        </div>
+    <div id="adminBox" class="card" style="min-width:320px;max-width:420px">
+      <div id="adminStatus">Checking auth...</div>
+      <div id="adminControls" style="margin-top:10px;display:none">
+        <div class="small">Signed in as <b id="adminName"></b></div>
       </div>
     </div>
   </div>
+
+  <hr style="border:none;height:16px">
+
+  <div class="row">
+    <!-- Requests -->
+    <div class="card" style="flex:0.75">
+      <h3>Pending Requests</h3>
+      <div class="small">Showing both <code>pendingUsers/</code> and <code>forms/</code> entries</div>
+      <div id="requestList" class="list" style="margin-top:10px">Loading…</div>
+      <div id="reqAlert" class="alert"></div>
+    </div>
+
+    <!-- Editor -->
+    <div class="card" style="flex:0.9">
+      <h3>Edit / Inspect User</h3>
+      <div class="small">Load a user (by UID) and edit any field — saves to Realtime DB instantly.</div>
+
+      <label>UID</label>
+      <div class="field-row" style="margin-top:6px">
+        <input id="editUID" placeholder="Paste UID (or username -> lookup)"/>
+        <button id="loadUserBtn" class="btn">Load</button>
+      </div>
+
+      <div id="userEditor" style="display:none;margin-top:12px">
+        <label>Username</label>
+        <input id="editUsername"/>
+
+        <label>Role</label>
+        <select id="editRole">
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+          <option value="moderator">Moderator</option>
+        </select>
+
+        <label>Tokens (gold)</label>
+        <input id="editTokens" type="number"/>
+
+        <label>Level</label>
+        <input id="editLevel" type="number"/>
+
+        <label>XP</label>
+        <input id="editXP" type="number"/>
+
+        <label>Packs Opened</label>
+        <input id="editPacks" type="number"/>
+
+        <label>Messages Sent</label>
+        <input id="editMessages" type="number"/>
+
+        <label>Chat Name Color</label>
+        <input id="editNameColor" placeholder="#ffffff"/>
+
+        <label>Chat Text Color</label>
+        <input id="editTextColor" placeholder="#000000"/>
+
+        <label>Badges (JSON)</label>
+        <textarea id="editBadges" rows="3" placeholder='{"badge1":true}'></textarea>
+
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button id="saveUserBtn" class="btn">Save changes</button>
+          <button id="deleteUserBtn" class="btn ghost">Delete user</button>
+        </div>
+
+        <div id="editorAlert" class="alert" style="margin-top:10px"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr style="border:none;height:16px">
+
+  <div class="row">
+    <div class="card" style="flex:0.9">
+      <h3>Add Custom Gold</h3>
+      <label>Name</label>
+      <input id="goldName"/>
+      <label>Image URL</label>
+      <input id="goldImg"/>
+      <label>Rarity</label>
+      <select id="goldRarity">
+        <option value="common">Common</option>
+        <option value="uncommon">Uncommon</option>
+        <option value="rare">Rare</option>
+        <option value="epic">Epic</option>
+        <option value="legendary">Legendary</option>
+        <option value="chroma">Chroma</option>
+      </select>
+      <div style="margin-top:10px;display:flex;gap:8px">
+        <button id="addGoldBtn" class="btn">Add Gold</button>
+        <button id="clearChatBtn" class="btn ghost">Clear chat</button>
+      </div>
+      <div id="goldAlert" class="alert"></div>
+    </div>
+
+    <div class="card" style="flex:0.6">
+      <h3>Quick tools</h3>
+      <label>Lookup username → UID</label>
+      <input id="lookupName" placeholder="username"/>
+      <div style="margin-top:8px;display:flex;gap:8px">
+        <button id="lookupBtn" class="btn">Lookup</button>
+        <button id="refreshReqBtn" class="btn ghost">Refresh requests</button>
+      </div>
+      <div id="lookupResult" class="small" style="margin-top:8px"></div>
+    </div>
+  </div>
+
 </div>
 
 <script type="module">
+/* Admin panel:
+   - Supports both pendingUsers/{uid} and forms/{uid}
+   - Admin authenticated with Firebase Auth (email/password)
+   - Admin must have users/{uid}.role === "admin"
+*/
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-import { getDatabase, ref, onValue, get, set, update, remove } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+import {
+  getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut
+} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+import {
+  getDatabase, ref, onValue, get, set, update, remove, child
+} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
@@ -115,150 +201,157 @@ const auth = getAuth(app);
 const db = getDatabase(app);
 
 // UI refs
-const requestsList = document.getElementById('requestsList');
-const usersList = document.getElementById('usersList');
-const adminInfo = document.getElementById('adminInfo');
-const signOutBtn = document.getElementById('signOutBtn');
-const reqAlert = document.getElementById('reqAlert');
-const userAlert = document.getElementById('userAlert');
-const goldAlert = document.getElementById('goldAlert');
-const selectedAlert = document.getElementById('selectedAlert');
+const adminStatus = document.getElementById("adminStatus");
+const adminName = document.getElementById("adminName");
+const adminControls = document.getElementById("adminControls");
+const requestList = document.getElementById("requestList");
+const reqAlert = document.getElementById("reqAlert");
+const editorAlert = document.getElementById("editorAlert");
+const goldAlert = document.getElementById("goldAlert");
+const lookupResult = document.getElementById("lookupResult");
 
-// quick actions
-const addGoldBtn = document.getElementById('addGoldBtn');
-const goldName = document.getElementById('goldName');
-const goldImg = document.getElementById('goldImg');
-const goldRarity = document.getElementById('goldRarity');
+// sign-out button (sidebar)
+document.getElementById("signOutBtn").onclick = async () => {
+  await signOut(auth);
+  window.location.href = "login.html";
+};
 
-// selected user controls
-let selectedUID = null;
-const selUsername = document.getElementById('selUsername');
-const selRole = document.getElementById('selRole');
-const selLevel = document.getElementById('selLevel');
-const selXP = document.getElementById('selXP');
-const selGolds = document.getElementById('selGolds');
-const selPacks = document.getElementById('selPacks');
-const selMessages = document.getElementById('selMessages');
-const saveUserBtn = document.getElementById('saveUserBtn');
-const banUserBtn = document.getElementById('banUserBtn');
-const deleteUserBtn = document.getElementById('deleteUserBtn');
-
+// small helpers
 function showAlert(el, msg, ok=false){
-  el.style.display = 'block';
-  el.style.background = ok ? 'rgba(40,180,40,0.12)' : 'rgba(255,0,0,0.12)';
+  el.style.display = "block";
+  el.style.background = ok ? "rgba(40,180,40,0.12)" : "rgba(255,0,0,0.12)";
   el.textContent = msg;
-  setTimeout(()=> el.style.display = 'none', 4000);
+  setTimeout(()=> el.style.display = "none", 4500);
 }
+function isObj(o){ return o && typeof o === 'object' && !Array.isArray(o); }
 
-function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-
-// ----- AUTH -----
-// require admin login. If already signed in, verify role === 'admin' at /users/{uid}.role
+// --- AUTH LISTENER ---
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
-    adminInfo.textContent = 'Not signed in as admin — please sign in below.';
-    // show an inline simple login prompt
-    adminInfo.innerHTML = `
-      <div style="display:flex;flex-direction:column;gap:6px">
-        <input id="inlineAdminUser" placeholder="admin username" style="padding:6px;border-radius:6px;background:#111;color:#ffd;border:1px solid rgba(212,175,55,0.06)">
-        <input id="inlineAdminPass" type="password" placeholder="password" style="padding:6px;border-radius:6px;background:#111;color:#ffd;border:1px solid rgba(212,175,55,0.06)">
-        <div style="display:flex;gap:6px">
-          <button id="inlineAdminSignIn" class="btn">Sign in</button>
+    adminStatus.innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <input id="adminUser" placeholder="admin username (no domain)" style="padding:8px;border-radius:6px;background:#0f0f0f;color:#ffd;border:1px solid rgba(212,175,55,0.06)">
+        <input id="adminPass" type="password" placeholder="password" style="padding:8px;border-radius:6px;background:#0f0f0f;color:#ffd;border:1px solid rgba(212,175,55,0.06)">
+        <div style="display:flex;gap:8px">
+          <button id="adminSignIn" class="btn">Sign in</button>
         </div>
+        <div class="small">Sign in with the account you created (email = username@goldet.internal)</div>
       </div>
     `;
-    document.getElementById('inlineAdminSignIn').onclick = async () => {
-      const u = document.getElementById('inlineAdminUser').value.trim();
-      const p = document.getElementById('inlineAdminPass').value;
-      if (!u || !p) return showAlert(reqAlert, 'Enter username + password');
-      const email = `${u}@goldet.internal`; // match signup shim
+    document.getElementById("adminSignIn").onclick = async () => {
+      const u = document.getElementById("adminUser").value.trim();
+      const p = document.getElementById("adminPass").value;
+      if (!u || !p) return showAlert(reqAlert, "Enter credentials.");
+      const email = `${u}@goldet.internal`;
       try {
         await signInWithEmailAndPassword(auth, email, p);
-        showAlert(reqAlert, 'Signed in — verifying admin...', true);
-      } catch(e){
+        showAlert(reqAlert, "Signed in — verifying admin...", true);
+      } catch (e) {
         console.error(e);
-        showAlert(reqAlert, 'Sign in failed: ' + (e.message||e));
+        showAlert(reqAlert, "Sign-in failed: " + (e.message||e));
       }
     };
+    // still load requests in read-only mode so admins can see (but can't approve)
+    loadRequests(false);
+    adminControls.style.display = "none";
+    adminName.textContent = "";
     return;
   }
 
-  // verify role
+  // when user signed in, check if that uid has role=admin in /users/{uid}
   const uid = user.uid;
-  const snap = await get(ref(db, 'users/' + uid));
-  if (!snap.exists() || snap.val().role !== 'admin') {
-    // not admin -> sign out and block
-    try { await signOut(auth); } catch(e){}
-    adminInfo.textContent = 'Account not authorized as admin.';
-    showAlert(reqAlert, 'This account is not an admin.');
+  const uSnap = await get(ref(db, `users/${uid}`));
+  if (!uSnap.exists() || (uSnap.val().role !== "admin" && uSnap.val().role !== "moderator")) {
+    // not admin -> sign out and warn
+    await signOut(auth);
+    alert("This account is not authorized as admin. Make sure user's role is set to 'admin' in /users/{uid}.");
+    loadRequests(false);
     return;
   }
 
-  // ok admin
-  const adminData = snap.val();
-  adminInfo.innerHTML = `<div style="font-weight:800;color:#ffd700">${escapeHtml(adminData.username)}</div><div class="small">You are signed in as admin</div>`;
-  // load all live data
-  startRealtime();
+  // authorized
+  adminControls.style.display = "block";
+  adminName.textContent = uSnap.val().username || uid;
+  adminStatus.textContent = "Authorized admin";
+  loadRequests(true);
 });
 
-// sign out handler
-signOutBtn.addEventListener('click', async () => {
-  try { await signOut(auth); } catch(e){}
-  location.reload();
-});
+// --- LOAD REQUESTS (both paths) ---
+function loadRequests(enabled = false){
+  // merge two sources: pendingUsers/ and forms/
+  const pendingRef = ref(db, "pendingUsers");
+  const formsRef = ref(db, "forms");
+  // we'll re-render on any change to either
+  onValue(pendingRef, renderMerged);
+  onValue(formsRef, renderMerged);
 
-// ----- realtime listeners and handlers -----
-let usersCache = {}; // uid => userData
+  async function renderMerged(){
+    const pSnap = await get(pendingRef);
+    const fSnap = await get(formsRef);
+    const p = pSnap.exists() ? pSnap.val() : {};
+    const f = fSnap.exists() ? fSnap.val() : {};
 
-function startRealtime(){
-  // pending forms
-  onValue(ref(db, 'forms'), (snap) => {
-    const data = snap.val() || {};
-    renderRequests(data);
-  });
+    // Build unified list keyed by uid (prefer pendingUsers ids)
+    const map = {};
+    // pendingUsers expected keyed by uid
+    for (const uid in p) if (p[uid]) map[uid] = {uid, ...p[uid], source:"pendingUsers"};
+    // forms may be keyed by uid or by username — handle both
+    for (const key in f) {
+      if (!f[key]) continue;
+      // if f entry includes username + requestedAt etc. If key looks like uid (length>16), treat as uid
+      const uidKey = key;
+      if (!map[uidKey]) map[uidKey] = { uid: uidKey, ...f[key], source:"forms" };
+      else { /* merge fields if needed */ map[uidKey] = {...map[uidKey], ...f[key]}; }
+    }
 
-  // users list
-  onValue(ref(db, 'users'), (snap) => {
-    usersCache = snap.val() || {};
-    renderUsers(usersCache);
-  });
-}
-
-function renderRequests(data){
-  requestsList.innerHTML = '';
-  let found = false;
-  for (const uid in data){
-    const f = data[uid];
-    if (!f || f.status !== 'pending') continue;
-    found = true;
-    const box = document.createElement('div');
-    box.className = 'request';
-    box.innerHTML = `<div style="display:flex;justify-content:space-between">
-      <div>
-        <div style="font-weight:800">${escapeHtml(f.username || '—')}</div>
-        <div class="small">Age: ${escapeHtml(f.age||'—')} — Discord: ${escapeHtml(f.discord||'—')}</div>
-        <div style="margin-top:6px">${escapeHtml(f.whyPlay||'')}</div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:6px">
-        <button class="btn" onclick="approve('${uid}')">Approve</button>
-        <button class="ghost" onclick="decline('${uid}')">Decline</button>
-      </div>
-    </div>`;
-    requestsList.appendChild(box);
+    // Render
+    requestList.innerHTML = "";
+    const keys = Object.keys(map).sort((a,b)=> (map[a].requestedAt||0) - (map[b].requestedAt||0));
+    if (keys.length === 0) {
+      requestList.innerHTML = "<div class='small'>No pending requests.</div>";
+      return;
+    }
+    for (const uid of keys) {
+      const r = map[uid];
+      if (!r || r.status === "approved" || r.status === "declined") continue;
+      const div = document.createElement("div");
+      div.className = "request";
+      div.innerHTML = `
+        <div style="display:flex;justify-content:space-between">
+          <div>
+            <b>${r.username||r.email||"(unknown)"}</b>
+            <div class="small">UID: <code style="font-size:12px">${uid}</code></div>
+            <div class="small">Age: ${r.age||"–"} — Discord: ${r.discord||"–"}</div>
+            <div style="margin-top:8px">${r.whyPlay||r.why||""}</div>
+            <div class="small" style="margin-top:6px">Source: ${r.source}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button ${enabled ? "" : "disabled"} onclick="approve('${uid}')">Approve</button>
+            <button ${enabled ? "" : "disabled"} onclick="decline('${uid}')">Decline</button>
+            <button ${enabled ? "" : "disabled"} onclick="loadEditor('${uid}')">Open</button>
+          </div>
+        </div>
+      `;
+      requestList.appendChild(div);
+    }
   }
-  if (!found) requestsList.innerHTML = '<div class="small">No pending requests.</div>';
 }
 
-// attach functions to window for inline onclicks
+// expose functions for inline onclick
 window.approve = async function(uid){
   try {
-    const fSnap = await get(ref(db, 'forms/' + uid));
-    if (!fSnap.exists()) return showAlert(reqAlert, 'Form not found');
-    const f = fSnap.val();
-    // create starter user record if not exists
+    // Read form/pending to gather username and extras
+    const formSnap = await get(ref(db, `pendingUsers/${uid}`));
+    const form2 = formSnap.exists() ? formSnap.val() : null;
+    const altSnap = await get(ref(db, `forms/${uid}`));
+    const form3 = altSnap.exists() ? altSnap.val() : null;
+    const data = form2 || form3;
+    if (!data) return showAlert(reqAlert, "Request not found.");
+
+    // Create starter user at /users/{uid}
     const starter = {
-      username: f.username,
-      role: 'user',
+      username: data.username || data.email?.split("@")[0] || ("user_"+Date.now()),
+      role: "user",
       level: 1,
       xp: 0,
       tokens: 0,
@@ -267,127 +360,157 @@ window.approve = async function(uid){
       packsOpened: 0,
       messages: 0,
       badges: {},
-      stats: { golds: {} },
+      chatColor: { name:"#ffffff", text:"#000000" },
       createdAt: Date.now()
     };
-    await set(ref(db, 'users/' + uid), starter);
-    await update(ref(db, 'forms/' + uid), { status: 'approved' });
-    // create username mapping if not present
-    if (f.username) await set(ref(db, 'usernames/' + f.username), uid);
-    showAlert(reqAlert, `Approved ${f.username}`, true);
-  } catch(e){
+    await set(ref(db, `users/${uid}`), starter);
+    // remove pending entry(s) and mark forms if present
+    await remove(ref(db, `pendingUsers/${uid}`)).catch(()=>{});
+    await update(ref(db, `forms/${uid}`), { status: "approved" }).catch(()=>{});
+    showAlert(reqAlert, `Approved ${starter.username}`, true);
+  } catch (e) {
     console.error(e);
-    showAlert(reqAlert, 'Approve failed: '+(e.message||e));
+    showAlert(reqAlert, "Approve failed: " + (e.message||e));
   }
 };
 
 window.decline = async function(uid){
   try {
-    const fSnap = await get(ref(db, 'forms/' + uid));
-    if (!fSnap.exists()) return showAlert(reqAlert, 'Form not found');
-    const f = fSnap.val();
-    await update(ref(db, 'forms/' + uid), { status: 'declined' });
-    // optional: remove username reservation if any
-    if (f.username) {
-      try { await remove(ref(db, 'usernames/' + f.username)); } catch {}
-    }
-    showAlert(reqAlert, `Declined ${f.username}`);
-  } catch(e){
+    // mark declined (prefer forms path) and remove pendingUsers
+    await update(ref(db, `forms/${uid}`), { status: "declined" }).catch(()=>{});
+    await remove(ref(db, `pendingUsers/${uid}`)).catch(()=>{});
+    showAlert(reqAlert, "Declined request");
+  } catch (e) {
     console.error(e);
-    showAlert(reqAlert, 'Decline failed: '+(e.message||e));
+    showAlert(reqAlert, "Decline failed: " + (e.message||e));
   }
 };
 
-// render user list
-function renderUsers(users){
-  usersList.innerHTML = '';
-  const uids = Object.keys(users || {});
-  if (!uids.length) return usersList.innerHTML = '<div class="small">No users</div>';
-  uids.forEach(uid => {
-    const u = users[uid] || {};
-    const div = document.createElement('div');
-    div.className = 'user-item';
-    div.innerHTML = `<div>
-        <div style="font-weight:800">${escapeHtml(u.username||uid)}</div>
-        <div class="small">${escapeHtml(u.email||'')} — ${escapeHtml(u.role||'user')}</div>
-      </div>
-      <div style="display:flex;gap:8px">
-        <button class="btn" onclick="selectUser('${uid}')">Edit</button>
-      </div>`;
-    usersList.appendChild(div);
-  });
-}
-
-// select user to edit
-window.selectUser = function(uid){
-  selectedUID = uid;
-  const u = usersCache[uid] || {};
-  document.getElementById('selectedUserBox').innerHTML = `<div style="font-weight:800">${escapeHtml(u.username||'')}</div><div class="small">${escapeHtml(u.email||'')}</div>`;
-  selUsername.value = u.username || '';
-  selRole.value = u.role || 'user';
-  selLevel.value = u.level ?? 0;
-  selXP.value = u.xp ?? 0;
-  selGolds.value = u.goldsUnlocked ?? 0;
-  selPacks.value = u.packsOpened ?? 0;
-  selMessages.value = u.messages ?? 0;
+// --- EDITOR functions ---
+const loadUserBtn = document.getElementById("loadUserBtn");
+const editUID = document.getElementById("editUID");
+const userEditor = document.getElementById("userEditor");
+loadUserBtn.onclick = async () => {
+  const key = editUID.value.trim();
+  if (!key) return showAlert(editorAlert, "Enter UID.");
+  await loadEditor(key);
 };
 
-// save user changes
-saveUserBtn.addEventListener('click', async () => {
-  if (!selectedUID) return showAlert(selectedAlert, 'No user selected.');
+window.loadEditor = async function(uid){
   try {
-    const updates = {
-      username: selUsername.value.trim(),
-      role: selRole.value,
-      level: Number(selLevel.value) || 0,
-      xp: Number(selXP.value) || 0,
-      goldsUnlocked: Number(selGolds.value) || 0,
-      packsOpened: Number(selPacks.value) || 0,
-      messages: Number(selMessages.value) || 0
+    // If they passed a username, try lookup in usernames map
+    let uidFinal = uid;
+    const maybe = await get(ref(db, `usernames/${uid}`));
+    if (maybe.exists()) uidFinal = maybe.val();
+
+    const snap = await get(ref(db, `users/${uidFinal}`));
+    if (!snap.exists()) return showAlert(editorAlert, "User not found: " + uidFinal);
+    const d = snap.val();
+
+    document.getElementById("editUsername").value = d.username || "";
+    document.getElementById("editRole").value = d.role || "user";
+    document.getElementById("editTokens").value = d.tokens ?? 0;
+    document.getElementById("editLevel").value = d.level ?? 1;
+    document.getElementById("editXP").value = d.xp ?? 0;
+    document.getElementById("editPacks").value = d.packsOpened ?? 0;
+    document.getElementById("editMessages").value = d.messages ?? 0;
+    document.getElementById("editNameColor").value = (d.chatColor && d.chatColor.name) || "#ffffff";
+    document.getElementById("editTextColor").value = (d.chatColor && d.chatColor.text) || "#000000";
+    document.getElementById("editBadges").value = JSON.stringify(d.badges || {});
+    userEditor.style.display = "block";
+    // store current editing uid
+    userEditor.dataset.editingUid = uidFinal;
+  } catch (e) {
+    console.error(e);
+    showAlert(editorAlert, "Load failed: " + (e.message||e));
+  }
+};
+
+document.getElementById("saveUserBtn").onclick = async () => {
+  try {
+    const uid = userEditor.dataset.editingUid;
+    if (!uid) return showAlert(editorAlert, "No user loaded.");
+    const updateObj = {
+      username: document.getElementById("editUsername").value.trim(),
+      role: document.getElementById("editRole").value,
+      tokens: Number(document.getElementById("editTokens").value) || 0,
+      level: Number(document.getElementById("editLevel").value) || 1,
+      xp: Number(document.getElementById("editXP").value) || 0,
+      packsOpened: Number(document.getElementById("editPacks").value) || 0,
+      messages: Number(document.getElementById("editMessages").value) || 0,
+      chatColor: {
+        name: document.getElementById("editNameColor").value || "#ffffff",
+        text: document.getElementById("editTextColor").value || "#000000"
+      }
     };
-    await update(ref(db, 'users/' + selectedUID), updates);
-    showAlert(selectedAlert, 'Saved changes', true);
-    // ensure username mapping matches
-    if (updates.username) await set(ref(db, 'usernames/' + updates.username), selectedUID);
-  } catch(e){
+    // badges parse
+    try { updateObj.badges = JSON.parse(document.getElementById("editBadges").value || "{}"); }
+    catch(e){ return showAlert(editorAlert, "Badges JSON invalid."); }
+
+    await update(ref(db, `users/${uid}`), updateObj);
+    showAlert(editorAlert, "Saved.", true);
+  } catch (e) {
     console.error(e);
-    showAlert(selectedAlert, 'Save failed: ' + (e.message||e));
+    showAlert(editorAlert, "Save failed: " + (e.message||e));
   }
-});
+};
 
-// ban user
-banUserBtn.addEventListener('click', async () => {
-  if (!selectedUID) return showAlert(selectedAlert, 'No user selected.');
-  if (!confirm('Ban this user? This sets users/{uid}.banned = true')) return;
+document.getElementById("deleteUserBtn").onclick = async () => {
+  if (!confirm("Delete user record permanently? This cannot be undone.")) return;
+  const uid = userEditor.dataset.editingUid;
+  if (!uid) return showAlert(editorAlert, "No user loaded.");
   try {
-    await update(ref(db, 'users/' + selectedUID), { banned: true });
-    showAlert(selectedAlert, 'User banned', true);
-  } catch(e){ showAlert(selectedAlert, 'Ban failed: ' + (e.message||e)); }
-});
-
-// delete user
-deleteUserBtn.addEventListener('click', async () => {
-  if (!selectedUID) return showAlert(selectedAlert, 'No user selected.');
-  if (!confirm('Delete user record? This will remove /users/{uid} and username mapping.')) return;
-  try {
-    const u = usersCache[selectedUID] || {};
-    if (u.username) await remove(ref(db, 'usernames/' + u.username));
-    await remove(ref(db, 'users/' + selectedUID));
-    showAlert(selectedAlert, 'Deleted user', true);
-  } catch(e){ showAlert(selectedAlert, 'Delete failed: ' + (e.message||e)); }
-});
+    await remove(ref(db, `users/${uid}`));
+    showAlert(editorAlert, "Deleted.", true);
+    userEditor.style.display = "none";
+  } catch (e) {
+    console.error(e);
+    showAlert(editorAlert, "Delete failed: " + (e.message||e));
+  }
+};
 
 // add gold
-addGoldBtn.addEventListener('click', async () => {
-  const name = goldName.value.trim(); const img = goldImg.value.trim(); const rarity = goldRarity.value;
-  if (!name || !img) return showAlert(goldAlert, 'Enter name & image');
-  const safe = name.replace(/\./g,'_') + '_' + Date.now();
+document.getElementById("addGoldBtn").onclick = async () => {
+  const name = document.getElementById("goldName").value.trim();
+  const img = document.getElementById("goldImg").value.trim();
+  const rarity = document.getElementById("goldRarity").value;
+  if (!name || !img) return showAlert(goldAlert, "Enter name + image.");
+  const key = name.replace(/\./g,'_');
   try {
-    await set(ref(db, 'golds/' + safe), { name, img, rarity, createdAt: Date.now() });
-    showAlert(goldAlert, 'Gold added', true);
-    goldName.value = ''; goldImg.value = '';
-  } catch(e){ showAlert(goldAlert, 'Add failed: ' + (e.message||e)); }
-});
+    await set(ref(db, `golds/${key}`), { name, img, rarity, createdAt: Date.now() });
+    showAlert(goldAlert, "Added gold.", true);
+    document.getElementById("goldName").value = "";
+    document.getElementById("goldImg").value = "";
+  } catch (e) {
+    console.error(e);
+    showAlert(goldAlert, "Add gold failed.");
+  }
+};
+
+// clear chat
+document.getElementById("clearChatBtn").onclick = async () => {
+  if (!confirm("Clear ALL chat messages?")) return;
+  try {
+    await remove(ref(db, "messages"));
+    showAlert(goldAlert, "Chat cleared.", true);
+  } catch (e) {
+    console.error(e);
+    showAlert(goldAlert, "Clear failed.");
+  }
+};
+
+// lookup username -> uid
+document.getElementById("lookupBtn").onclick = async () => {
+  const uname = document.getElementById("lookupName").value.trim();
+  if (!uname) return showAlert(lookupResult, "Enter username.");
+  const snap = await get(ref(db, `usernames/${uname}`));
+  if (!snap.exists()) return showAlert(lookupResult, "Not found.");
+  showAlert(lookupResult, `UID: ${snap.val()}`, true);
+  lookupResult.textContent = `UID: ${snap.val()}`;
+};
+
+// refresh requests
+document.getElementById("refreshReqBtn").onclick = () => loadRequests(true);
 
 </script>
 </body>
