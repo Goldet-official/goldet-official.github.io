@@ -37,6 +37,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -51,52 +52,50 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = getDatabase(app);
 
-function showAlert(msg, ok=false){
-  const alertBox = document.getElementById("alertBox");
+const alertBox = document.getElementById("alertBox");
+function showAlert(msg, ok = false){
   alertBox.style.display = "block";
   alertBox.style.background = ok ? "rgba(40,180,40,0.12)" : "rgba(255,0,0,0.12)";
   alertBox.textContent = msg;
   setTimeout(()=> alertBox.style.display = "none", 4500);
 }
 
-async function hashPassword(pw){
-  const buf = new TextEncoder().encode(pw);
-  const digest = await crypto.subtle.digest("SHA-256", buf);
-  return Array.from(new Uint8Array(digest))
-    .map(b => b.toString(16).padStart(2,'0'))
-    .join('');
-}
+function makeEmailFromUsername(name){ return `${name}@goldet.internal`; }
 
-// ---------- LOGIN ----------
 document.getElementById("loginBtn").addEventListener("click", async () => {
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value;
+  if (!username || !password) return showAlert("Enter username and password.");
 
-  if (!username || !password)
-    return showAlert("Enter username and password");
+  const email = makeEmailFromUsername(username);
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, password);
+    const uid = cred.user.uid;
 
-  // Get user data from Firebase
-  const userSnap = await get(ref(db, "users/" + username));
+    // check if admin approved -> there must be /users/{uid}
+    const snap = await get(ref(db, `users/${uid}`));
+    if (!snap.exists()) {
+      // not approved yet - sign out and warn user
+      await signOut(auth);
+      return showAlert("Account not approved yet. Wait for admin.");
+    }
 
-  if (!userSnap.exists())
-    return showAlert("Account not found");
+    // save session (UID + username)
+    localStorage.setItem("goldetCurrentUID", uid);
+    localStorage.setItem("goldetCurrentUsername", username);
 
-  const userData = userSnap.val();
-  const hashedInput = await hashPassword(password);
+    showAlert("Login successful!", true);
+    setTimeout(()=> window.location.href = "stats.html", 700);
 
-  if (hashedInput !== userData.password)
-    return showAlert("Incorrect password");
-
-  // Save login
-  localStorage.setItem("currentUser", username);
-
-  showAlert("Logged in!", true);
-
-  setTimeout(() => {
-    window.location.href = "stats.html";
-  }, 800);
+  } catch (err) {
+    console.error(err);
+    if (err.code === "auth/wrong-password") showAlert("Incorrect password.");
+    else if (err.code === "auth/user-not-found") showAlert("Account not found.");
+    else showAlert("Login failed: " + (err.message || err));
+  }
 });
 </script>
 
