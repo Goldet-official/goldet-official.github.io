@@ -226,7 +226,7 @@
 
     <div class="stat-box">
       <p class="stat-title">Golds Unlocked</p>
-      <p class="stat-value" id="blocksDisplay">0 / 0</p>
+      <p class="stat-value" id="goldsDisplay">0 / 0</p>
     </div>
 
     <div class="stat-box">
@@ -295,7 +295,7 @@
       document.getElementById("levelDisplay").textContent = "Level " + (data.level ?? 1);
       document.getElementById("xpBar").style.width = (data.xp ?? 0) + "%";
       document.getElementById("tokensDisplay").textContent = data.tokens ?? 0;
-      document.getElementById("blocksDisplay").textContent =
+      document.getElementById("goldsDisplay").textContent =
         (data.goldsUnlocked ?? 0) + " / " + (data.totalGolds ?? 0);
       document.getElementById("packsDisplay").textContent = data.packsOpened ?? 0;
       document.getElementById("messagesDisplay").textContent = data.messages ?? 0;
