@@ -1,251 +1,336 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Goldet</title>
-  <link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Goldet — First Gold Private Server</title>
 
-  <style>
-    :root {
-      --gold1: #d4af37;
-      --gold2: #f5d67b;
-      --gold3: #b8860b;
-      --dark: #0a0a0a;
-      --dark2: #181818;
-      --glass: rgba(255,255,255,0.06);
-    }
+<link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet" />
 
-    body {
-      margin: 0;
-      font-family: 'Titan One', cursive;
-      display: flex;
-      flex-wrap: wrap;
-      min-height: 100vh;
-      background: radial-gradient(circle at 20% 20%, rgba(212,175,55,0.18), transparent 60%),
-                  radial-gradient(circle at 80% 80%, rgba(245,214,123,0.12), transparent 60%),
-                  var(--dark);
-      color: var(--gold2);
-    }
+<style>
+  :root{
+    --gold-1: #ffd700;
+    --gold-2: #b8860b;
+    --bg-dark: #050505;
+    --panel: #0f0f0f;
+    --muted: #d9c08c;
+  }
 
-    /* LEFT SIDE */
-    .left, .right {
-      box-sizing: border-box;
-      padding: 60px;
-    }
+  html,body{height:100%;margin:0;background:var(--bg-dark);font-family:system-ui,Arial,sans-serif;color:var(--muted);-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
 
-    .left {
-      width: 50%;
-      background: linear-gradient(135deg, var(--gold1), var(--gold3));
-      color: #0a0a0a;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      box-shadow: inset 0 0 40px rgba(0,0,0,0.35);
-    }
+  /* Layout: split left / right */
+  .wrap{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:24px;
+    padding:40px;
+    box-sizing:border-box;
+  }
 
-    .left h1 {
-      font-size: 56px;
-      margin: 0 0 10px;
-      text-shadow: 0 2px 6px rgba(0,0,0,0.25);
-    }
+  /* LEFT PANEL */
+  .left {
+    width:48%;
+    max-width:820px;
+    padding:60px 48px;
+    background:linear-gradient(180deg, rgba(255,215,0,0.03), rgba(0,0,0,0.02));
+    border-radius:12px;
+    border: 1px solid rgba(212,175,55,0.04);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+  }
 
-    .left p {
-      font-size: 18px;
-      line-height: 1.6;
-      color: #3b2f07;
-      margin: 20px 0 40px;
-      font-weight: 500;
-    }
+  .brand {
+    font-family: 'Titan One', cursive;
+    font-size:44px;
+    color:var(--gold-1);
+    letter-spacing:1px;
+    margin:0 0 18px;
+    text-shadow:0 4px 18px rgba(189,145,0,0.08);
+  }
 
-    /* BUTTONS */
-    .buttons {
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
+  .big-title{
+    font-family: 'Titan One', cursive;
+    font-size:72px;
+    line-height:0.95;
+    color: white;
+    margin: 8px 0 18px;
+    text-shadow: 0 6px 28px rgba(0,0,0,0.65);
+  }
 
-    .btn {
-      background: var(--dark2);
-      color: var(--gold2);
-      padding: 14px 28px;
-      font-size: 18px;
-      border: 2px solid var(--gold1);
-      border-radius: 12px;
-      text-decoration: none;
-      transition: 0.25s;
-      box-shadow: 0 0 10px rgba(212,175,55,0.3);
-    }
+  .subtitle{
+    font-size:18px;
+    margin:12px 0 28px;
+    color:#e9d89a;
+    max-width:560px;
+  }
 
-    .btn:hover {
-      background: var(--gold1);
-      color: #0a0a0a;
-      box-shadow: 0 0 18px var(--gold1);
-    }
+  .left .buttons{
+    display:flex;
+    gap:16px;
+    flex-wrap:wrap;
+    margin-bottom:22px;
+  }
 
-    .discord-btn {
-      background: #5865F2;
-      border-color: #99a4ff;
-    }
+  .btn {
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding:12px 24px;
+    border-radius:10px;
+    border:2px solid rgba(255,215,0,0.12);
+    background:transparent;
+    color:#fff;
+    font-weight:700;
+    cursor:pointer;
+    transition: all .18s ease;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+  }
 
-    .discord-btn:hover {
-      background: #3d49b8;
-    }
+  .btn.primary {
+    background: linear-gradient(90deg,var(--gold-1),var(--gold-2));
+    color:#0a0a0a;
+    border: none;
+  }
 
-    .pronounce {
-      margin-top: 30px;
-      font-size: 14px;
-      color: #3b2f07;
-    }
+  .btn.ghost {
+    background: transparent;
+    color: var(--gold-1);
+  }
 
-    .footer {
-      font-size: 12px;
-      color: #3b2f07;
-      margin-top: auto;
-    }
+  .pronounce{
+    margin-top:8px;
+    font-size:13px;
+    color:#f2e2a3;
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
 
-    /* RIGHT SIDE ICON GRID */
-    .right {
-      width: 50%;
-      background: linear-gradient(135deg, #000, #1a1303);
-      display: flex;
-      flex-wrap: wrap;
-      align-content: center;
-      justify-content: center;
-      padding: 40px;
-      gap: 20px;
-      box-shadow: inset 0 0 50px rgba(212,175,55,0.12);
-    }
+  .footer-small{
+    margin-top:26px;
+    color:#bfae6b;
+    font-size:13px;
+    max-width:520px;
+    line-height:1.4;
+  }
 
-    .icon {
-      width: 90px;
-      height: 90px;
-      background: var(--glass);
-      border: 2px solid var(--gold1);
-      border-radius: 16px;
-      box-shadow: 0 0 15px rgba(212,175,55,0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      backdrop-filter: blur(4px);
-    }
+  /* RIGHT PANEL: diagonal scattered grid */
+  .right {
+    width:45%;
+    min-height:520px;
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
 
-    .icon img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
+  .icons-canvas{
+    width:100%;
+    height:100%;
+    position:relative;
+    transform: rotate(-14deg) translateX(40px);
+    pointer-events:none;
+  }
 
-    /* VERSION TAG */
-    .version {
-      position: absolute;
-      bottom: 10px;
-      right: 20px;
-      font-size: 12px;
-      color: var(--gold2);
-      text-shadow: 0 0 6px rgba(212,175,55,0.4);
-    }
+  /* each icon container */
+  .icon {
+    width:98px;
+    height:98px;
+    background:var(--panel);
+    border-radius:16px;
+    border:1px solid rgba(255,255,255,0.03);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+    position:absolute;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .icon img{width:88%;height:88%;object-fit:contain;display:block}
 
-    /* RESPONSIVE */
-    @media (max-width: 900px) {
-      body {
-        flex-direction: column;
-      }
+  /* scattered positions (you can add/remove icon divs) */
+  .pos-1{left:8%; top:6%; transform: rotate(6deg); width:96px;height:96px}
+  .pos-2{left:26%; top:2%; transform: rotate(-4deg)}
+  .pos-3{left:44%; top:10%; transform: rotate(8deg)}
+  .pos-4{left:62%; top:2%; transform: rotate(-6deg)}
+  .pos-5{left:80%; top:8%; transform: rotate(4deg)}
+  .pos-6{left:12%; top:30%; transform: rotate(-8deg)}
+  .pos-7{left:30%; top:34%; transform: rotate(5deg)}
+  .pos-8{left:48%; top:28%; transform: rotate(-3deg)}
+  .pos-9{left:68%; top:34%; transform: rotate(6deg)}
+  .pos-10{left:86%; top:30%; transform: rotate(-5deg)}
+  .pos-11{left:6%; top:56%; transform: rotate(8deg)}
+  .pos-12{left:24%; top:58%; transform: rotate(-6deg)}
+  .pos-13{left:44%; top:54%; transform: rotate(5deg)}
+  .pos-14{left:64%; top:56%; transform: rotate(-4deg)}
+  .pos-15{left:82%; top:62%; transform: rotate(6deg)}
 
-      .left, .right {
-        width: 100%;
-        padding: 40px;
-      }
+  /* TOP RIGHT controls */
+  .top-right {
+    position:fixed;
+    right:28px;
+    top:18px;
+    display:flex;
+    gap:12px;
+    align-items:center;
+    z-index:2000;
+  }
 
-      .left h1 {
-        font-size: 42px;
-      }
+  .small-pill{
+    padding:10px 16px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.02);cursor:pointer;color:#fff;font-weight:700;
+  }
 
-      .btn {
-        width: 100%;
-        text-align: center;
-      }
+  .user-pill{display:flex;gap:10px;align-items:center;padding:10px 14px;border-radius:12px;background:linear-gradient(90deg,var(--gold-1),var(--gold-2));color:#070707;font-weight:800}
 
-      .buttons {
-        flex-direction: column;
-        gap: 10px;
-      }
+  /* version text */
+  .version {
+    position:fixed;
+    right:18px;
+    bottom:12px;
+    color:#bfae6b;
+    font-size:12px;
+  }
 
-      .icon {
-        width: 70px;
-        height: 70px;
-      }
-
-      .version {
-        position: static;
-        text-align: center;
-        margin-top: 20px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .left h1 {
-        font-size: 32px;
-      }
-
-      .left p {
-        font-size: 16px;
-      }
-
-      .btn {
-        font-size: 16px;
-        padding: 12px 20px;
-      }
-
-      .pronounce {
-        font-size: 12px;
-      }
-
-      .footer {
-        font-size: 10px;
-      }
-    }
-  </style>
+  /* responsive */
+  @media (max-width:1000px){
+    .wrap{flex-direction:column;padding:28px;gap:18px}
+    .left, .right{width:100%}
+    .right{min-height:340px}
+    .big-title{font-size:44px}
+    .brand{font-size:30px}
+    .icons-canvas{transform: rotate(-10deg) translateX(0)}
+    .pos-1{left:4%}
+  }
+</style>
 </head>
-
 <body>
 
-  <div class="left">
-    <h1>Goldet</h1>
-    <h1>Golden Private Server</h1>
-    <p>The first ever gold-themed platform created by YOU — powered by HTML, CSS, and JavaScript, redesigned with a metallic, premium Goldet style.</p>
-
-    <div class="buttons">
-      <a href="/signup.html" class="btn">Signup</a>
-      <a href="/login.html" class="btn">Login</a>
-      <a href="https://discord.gg/rfHHYjhA3H" class="btn discord-btn" target="_blank">Discord</a>
-      <a href="/credits.html" class="btn">Credits</a>
+  <!-- top right login/register or user -->
+  <div class="top-right" id="topRightControls">
+    <div id="authButtons">
+      <div class="small-pill" onclick="location.href='login.html'">Login</div>
+      <div class="small-pill" onclick="location.href='signup.html'">Register</div>
     </div>
-
-    <div class="pronounce">🔈 Pronunciation ("Gold-et")</div>
-
-    <div class="footer">
-      We are not affiliated with Blooket. <br>
-      Goldet © 2025 All Rights Reserved.
+    <div id="userBox" style="display:none">
+      <div class="user-pill" id="userPill">
+        <span id="usernameTop">You</span>
+        <button onclick="logout()" style="margin-left:8px;padding:6px 10px;border-radius:8px;border:none;cursor:pointer;background:rgba(0,0,0,0.16);color:#fff">Logout</button>
+      </div>
     </div>
   </div>
 
-  <div class="right">
-    <div class="icon"><img src="https://cdn.glitch.global/36ec2602-304b-444b-8f2f-08c65c92bbc0/thumbnails%2Fthumbnails_Strawberry%20Milk.png?1750440367893" alt="Strawberry Milk"></div>
-    <div class="icon"><img src="https://cdn.glitch.global/36ec2602-304b-444b-8f2f-08c65c92bbc0/thumbnails%2Fthumbnails_Warriet%20Milk.png?1750440415086" alt="Warriet Milk"></div>
-    <div class="icon"><img src="https://cdn.glitch.global/36ec2602-304b-444b-8f2f-08c65c92bbc0/thumbnails%2Fmoon.png?1750451519920" alt="Moon"></div>
-    <div class="icon"><img src="https://cdn.glitch.global/36ec2602-304b-444b-8f2f-08c65c92bbc0/thumbnails%2Fastronaut.png?1750451907761" alt="Astronaut"></div>
-    <div class="icon"><img src="https://i.postimg.cc/jSssbtjq/kingPig.png" alt="King Pig"></div>
-    <div class="icon"><img src="https://i.postimg.cc/t7T7JQH8/speed-Good-Alr.png" alt="SpeedGoodAlr"></div>
-    <div class="icon"><img src="https://i.postimg.cc/htNhD5Z3/Blooket-Warrior.gif" alt="Blooket Warrior"></div>
-    <div class="icon"><img src="/images/taco.png" alt="Taco"></div>
+  <div class="wrap">
+
+    <div class="left" role="main">
+      <div class="brand">Goldet</div>
+      <div class="big-title">First<br>Gold<br>Private Server</div>
+
+      <p class="subtitle">The first ever open-source Goldet platform created by the community. Built with HTML, CSS and Realtime Firebase to store accounts, stats, chat and admin approvals.</p>
+
+      <div class="buttons">
+        <button class="btn primary" onclick="location.href='signup.html'">Register</button>
+        <button class="btn ghost" onclick="location.href='store.html'">Store</button>
+        <button class="btn ghost" onclick="window.open('https://discord.gg/','_blank')">Discord</button>
+      </div>
+
+      <div class="pronounce">🔈 Pronunciation ("Gold-it")</div>
+
+      <div class="footer-small">
+        We are not affiliated with any other service. Goldet © <span id="thisYear"></span> — All Rights Reserved.
+      </div>
+    </div>
+
+    <div class="right" aria-hidden="true">
+      <div class="icons-canvas" id="iconsCanvas">
+        <!-- Replace the src values below with your own right-side images.
+             I included 15 placeholder slots, remove or add as you need. -->
+        <div class="icon pos-1"><img src="images/icon1.png" alt=""></div>
+        <div class="icon pos-2"><img src="images/icon2.png" alt=""></div>
+        <div class="icon pos-3"><img src="images/icon3.png" alt=""></div>
+        <div class="icon pos-4"><img src="images/icon4.png" alt=""></div>
+        <div class="icon pos-5"><img src="images/icon5.png" alt=""></div>
+        <div class="icon pos-6"><img src="images/icon6.png" alt=""></div>
+        <div class="icon pos-7"><img src="images/icon7.png" alt=""></div>
+        <div class="icon pos-8"><img src="images/icon8.png" alt=""></div>
+        <div class="icon pos-9"><img src="images/icon9.png" alt=""></div>
+        <div class="icon pos-10"><img src="images/icon10.png" alt=""></div>
+        <div class="icon pos-11"><img src="images/icon11.png" alt=""></div>
+        <div class="icon pos-12"><img src="images/icon12.png" alt=""></div>
+        <div class="icon pos-13"><img src="images/icon13.png" alt=""></div>
+        <div class="icon pos-14"><img src="images/icon14.png" alt=""></div>
+        <div class="icon pos-15"><img src="images/icon15.png" alt=""></div>
+      </div>
+    </div>
+
   </div>
 
-  <div class="version">
-    Running Goldet v1.3.0<br>
-    <a href="#" style="color:var(--gold2);text-decoration:underline;">Terms of Service</a>
-  </div>
+  <div class="version">Running Goldet v1.0.0</div>
 
+  <!-- Firebase init + small session script -->
+  <script type="module">
+    // Firebase modular v10 init (same config you supplied earlier)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    // we import database/auth only if you plan to use them on homepage
+    import { getDatabase } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
+      authDomain: "goldet-504aa.firebaseapp.com",
+      databaseURL: "https://goldet-504aa-default-rtdb.firebaseio.com",
+      projectId: "goldet-504aa",
+      storageBucket: "goldet-504aa.appspot.com",
+      messagingSenderId: "36312610816",
+      appId: "1:36312610816:web:ded0576d78ebf1ceba00e5",
+      measurementId: "G-TTJNTC824V"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const auth = getAuth(app);
+
+    // show year
+    document.getElementById('thisYear').textContent = new Date().getFullYear();
+
+    // show logged-in top-right if localStorage session exists OR firebase auth
+    function showUser(username){
+      document.getElementById('authButtons').style.display = 'none';
+      document.getElementById('userBox').style.display = 'block';
+      document.getElementById('usernameTop').textContent = username;
+    }
+
+    function hideUser(){
+      document.getElementById('authButtons').style.display = 'flex';
+      document.getElementById('userBox').style.display = 'none';
+    }
+
+    // prefer Firebase auth state, fallback to localStorage key (goldetCurrentUsername)
+    onAuthStateChanged(auth, (user) => {
+      if (user){
+        // If you store username in users/{uid}.username, you could fetch it here.
+        // For speed, try localStorage first:
+        const uname = localStorage.getItem('goldetCurrentUsername') || localStorage.getItem('goldetCurrentUser') || user.displayName || user.email || 'You';
+        showUser(uname);
+      } else {
+        const ls = localStorage.getItem('goldetCurrentUsername') || localStorage.getItem('goldetCurrentUser');
+        if (ls) showUser(ls);
+        else hideUser();
+      }
+    });
+
+    // logout helper (used by the top UI)
+    window.logout = async function(){
+      try { await signOut(auth); } catch(e){ /* ignore if not signed in */ }
+      localStorage.removeItem('goldetCurrentUsername');
+      localStorage.removeItem('goldetCurrentUser');
+      hideUser();
+      // optionally redirect
+      // window.location.href = 'login.html';
+    };
+
+  </script>
 </body>
 </html>
