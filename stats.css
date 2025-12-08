@@ -23,31 +23,11 @@ h2, h1 {
     padding:22px;display:flex;flex-direction:column;gap:12px;
   }
 
-.logo {
-  font-family: 'Titan One', cursive;
-  color: #ffd700;
-  text-align: center;
-  font-size: 32px;
-  margin-bottom: 25px;
-}
 
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-}
-
-.sidebar li {
-  padding: 12px 0;
-  font-size: 17px;
-  cursor: pointer;
-  color: #e8d56e;
-  transition: 0.2s;
-}
-
-.sidebar li:hover {
-  color: #fff5c3;
-  transform: translateX(4px);
-}
+.logo{font-family:'Titan One',cursive;color:#ffd700;font-size:34px; text-shadow:0 0 8px rgba(212,175,55,0.15)}
+  .nav a{display:block;color:#ffd; text-decoration:none;padding:10px;border-radius:8px;margin:6px 0;background:transparent}
+  .nav a:hover{background:rgba(212,175,55,0.06)}
+  /* Main */
 
 /* === MAIN === */
 .main {
