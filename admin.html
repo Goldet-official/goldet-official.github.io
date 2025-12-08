@@ -4,89 +4,49 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Goldet Admin Panel</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet" />
 <style>
   *{box-sizing:border-box}
-  html,body{height:100%;margin:0;font-family:Arial,system-ui,-apple-system; background:#030303;color:#fff}
-  /* Sidebar */
-  .sidebar{
-    position:fixed;left:0;top:0;bottom:0;width:240px;
-    background: linear-gradient(180deg,#1a1200,#2e1a03);
-    border-right: 2px solid rgba(212,175,55,0.06);
-    padding:22px;display:flex;flex-direction:column;gap:12px;
-  }
-  .logo{font-family:'Titan One',cursive;color:#ffd700;font-size:34px; text-shadow:0 0 8px rgba(212,175,55,0.15)}
-  .nav a{display:block;color:#ffd; text-decoration:none;padding:10px;border-radius:8px;margin:6px 0;background:transparent}
-  .nav a:hover{background:rgba(212,175,55,0.06)}
-  /* Main */
+  html,body{height:100%;margin:0;font-family:Arial,system-ui;background:#030303;color:#fff}
+  .sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;background: linear-gradient(180deg,#1a1200,#2e1a03);border-right: 2px solid rgba(212,175,55,0.06);padding:22px;display:flex;flex-direction:column;gap:12px;}
+  .logo{font-family:'Titan One',cursive;color:#ffd700;font-size:34px;text-shadow:0 0 8px rgba(212,175,55,0.15)}
+  .nav a{display:block;color:#ffd;text-decoration:none;padding:10px;border-radius:8px;margin:6px 0;background:transparent}
   .main{margin-left:260px;padding:30px;min-height:100vh;background:linear-gradient(180deg,#050505,#0b0b0b)}
   h1{font-family:'Titan One',cursive;color:#ffdf80;margin:0 0 12px}
   label{display:block;margin:8px 0 6px;color:#f6e6b4;font-weight:700}
-  input[type=text], select{
-    width:100%;padding:10px;border-radius:8px;border:1px solid rgba(212,175,55,0.12);
-    background:#0f0f0f;color:#ffefb6;font-size:16px;outline:none;
-  }
+  input[type=text], select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(212,175,55,0.12);background:#0f0f0f;color:#ffefb6;font-size:16px;outline:none;}
   .buttons-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
   button{background:linear-gradient(90deg,#ffd700,#b8860b);border:none;padding:12px 14px;border-radius:10px;color:#070707;font-weight:800;cursor:pointer}
   button.ghost{background:transparent;border:2px solid rgba(212,175,55,0.12);color:#ffd}
   .alert{padding:12px;border-radius:10px;margin-top:12px;display:none}
-  .request-list{margin-top:10px}
   .request{background:rgba(255,255,255,0.03);border:1px solid rgba(212,175,55,0.06);padding:12px;margin-bottom:10px;border-radius:8px}
-  .request b{color:#ffd700}
-  .admin-box{background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
-  .top-row{display:flex;gap:12px;align-items:center;justify-content:space-between}
   .small{font-size:13px;color:#d9c08c}
-  .right-actions{display:flex;gap:8px}
-  .hidden{display:none}
-  @media (max-width:900px){
-    .sidebar{position:relative;width:100%;height:auto;display:flex;flex-direction:row;overflow:auto}
-    .main{margin-left:0;padding:16px}
-  }
+  .admin-box{background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
 </style>
 </head>
 <body>
 
 <div class="sidebar">
   <div class="logo">Goldet</div>
-  <nav class="nav">
+  <nav>
     <a href="stats.html">Stats</a>
     <a href="leaderboard.html">Leaderboard</a>
     <a href="chat.html">Chat</a>
     <a href="market.html">Market</a>
-    <a href="golds.html"> Golds</a>
+    <a href="golds.html">Golds</a>
     <a href="settings.html">Settings</a>
-    <a href="#" id="sign-out-link" class="hidden">Logout</a>
+    <button id="signOutBtn" class="ghost" style="margin-top:8px">Sign out</button>
   </nav>
 </div>
 
 <div class="main">
-  <div class="top-row">
+  <div style="display:flex;justify-content:space-between;align-items:center">
     <div>
       <h1>Admin Panel — Account Requests</h1>
       <div class="small">Approve or decline pending signups, add custom golds, and moderate chat.</div>
     </div>
-
-    <!-- Admin login box -->
-    <div class="admin-box" id="adminAuthBox">
-      <div id="auth-form">
-        <label for="adminEmail">Admin Email</label>
-        <input id="adminEmail" type="text" placeholder="admin@example.com">
-        <label for="adminPass">Password</label>
-        <input id="adminPass" type="password" placeholder="password">
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <button id="adminLoginBtn">Sign in</button>
-          <button id="adminCreateBtn" class="ghost" title="Create admin account (use cautiously)">Create account</button>
-        </div>
-        <div class="small" style="margin-top:8px">Admins: configured by the <code>adminEmails</code> list in this page.</div>
-      </div>
-
-      <div id="adminInfo" class="hidden">
-        <div class="small">Signed in as <b id="adminEmailText"></b></div>
-        <div style="margin-top:8px">
-          <button id="signOutBtn" class="ghost">Sign out</button>
-        </div>
-      </div>
+    <div class="admin-box" id="adminInfoBox">
+      <div id="adminStatus">Checking auth...</div>
     </div>
   </div>
 
@@ -123,225 +83,216 @@
 
   <section>
     <h2>Pending Account Requests</h2>
-    <div id="request-list" class="request-list">Loading…</div>
+    <div id="request-list">Loading…</div>
     <div id="requests-alert" class="alert"></div>
   </section>
 </div>
 
-<!-- Firebase (modular v10) -->
- <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-  import {
-    getDatabase, ref, onValue, set, remove, update, get
-  } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
-  import {
-    getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
-    signOut, onAuthStateChanged
-  } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+import { getDatabase, ref, onValue, set, update, remove, get } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
-    authDomain: "goldet-504aa.firebaseapp.com",
-    databaseURL: "https://goldet-504aa-default-rtdb.firebaseio.com",
-    projectId: "goldet-504aa",
-    storageBucket: "goldet-504aa.appspot.com",
-    messagingSenderId: "36312610816",
-    appId: "1:36312610816:web:ded0576d78ebf1ceba00e5",
-    measurementId: "G-TTJNTC824V"
+const firebaseConfig = {
+  apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
+  authDomain: "goldet-504aa.firebaseapp.com",
+  databaseURL: "https://goldet-504aa-default-rtdb.firebaseio.com",
+  projectId: "goldet-504aa",
+  storageBucket: "goldet-504aa.appspot.com",
+  messagingSenderId: "36312610816",
+  appId: "1:36312610816:web:ded0576d78ebf1ceba00e5",
+  measurementId: "G-TTJNTC824V"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+const adminInfo = document.getElementById("adminStatus");
+const requestList = document.getElementById("request-list");
+const requestsAlert = document.getElementById("requests-alert");
+const addGoldAlert = document.getElementById("add-gold-alert");
+
+// Sign out btn
+document.getElementById("signOutBtn").onclick = async () => {
+  await signOut(auth);
+  window.location.href = "login.html";
+};
+
+// helper
+function showAlert(el, msg, ok=false){
+  el.style.display = "block";
+  el.style.background = ok ? "rgba(40,180,40,0.12)" : "rgba(255,0,0,0.12)";
+  el.textContent = msg;
+  setTimeout(()=> el.style.display = "none", 4000);
+}
+
+function makeEmailFromUsername(name){ return `${name}@goldet.internal`; }
+
+// Auth state: check if signed in and role is admin
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    adminInfo.textContent = "Not signed in.";
+    // show simple login prompt (username + password)
+    requestList.innerHTML = "<div class='small'>Sign in as admin using the form below.</div>";
+    showAdminLoginForm();
+    return;
+  }
+
+  // verify is admin by reading users/{uid}.role
+  const uid = user.uid;
+  const snapshot = await get(ref(db, `users/${uid}`));
+  const data = snapshot.exists() ? snapshot.val() : null;
+  if (!data || data.role !== "admin") {
+    adminInfo.textContent = "Signed in — not an admin.";
+    // auto sign out and block
+    await signOut(auth);
+    requestList.innerHTML = "<div class='small'>Account is not authorized as admin.</div>";
+    return;
+  }
+
+  adminInfo.innerHTML = `<div class="small">Signed in as <b>${data.username}</b> (admin)</div>`;
+  // Load requests with approve UI enabled
+  loadRequests(true);
+});
+
+// Render tiny login form inside adminInfo when not signed in
+function showAdminLoginForm(){
+  adminInfo.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <input id="adminLoginUser" placeholder="Admin username" style="padding:8px;border-radius:6px;background:#0f0f0f;color:#ffd;border:1px solid rgba(212,175,55,0.06)">
+      <input id="adminLoginPass" type="password" placeholder="Password" style="padding:8px;border-radius:6px;background:#0f0f0f;color:#ffd;border:1px solid rgba(212,175,55,0.06)">
+      <div style="display:flex;gap:8px">
+        <button id="adminSignInBtn">Sign in</button>
+      </div>
+      <div class="small" style="margin-top:6px">Admin accounts must have role: "admin".</div>
+    </div>
+  `;
+  document.getElementById("adminSignInBtn").onclick = async () => {
+    const u = document.getElementById("adminLoginUser").value.trim();
+    const p = document.getElementById("adminLoginPass").value;
+    if (!u || !p) return showAlert(requestsAlert, "Enter username/password.");
+    const email = makeEmailFromUsername(u);
+    try {
+      await signInWithEmailAndPassword(auth, email, p);
+      showAlert(requestsAlert, "Signed in — verifying admin...", true);
+    } catch (e) {
+      console.error(e);
+      showAlert(requestsAlert, "Sign in failed: " + (e.message || e));
+    }
   };
+}
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-  const auth = getAuth(app);
-
-  // ----------- ADMIN EMAIL WHITELIST -----------
-  const adminEmails = [
-    "ghostider12yt@gmail.com",
-    "anotheradmin@email.com"
-  ];
-
-  // UI refs
-  const reqListEl = document.getElementById("request-list");
-  const requestsAlert = document.getElementById("requests-alert");
-  const addGoldAlert = document.getElementById("add-gold-alert");
-  const authForm = document.getElementById("auth-form");
-  const adminInfo = document.getElementById("adminInfo");
-  const adminEmailText = document.getElementById("adminEmailText");
-  const signOutLink = document.getElementById("sign-out-link");
-
-  document.getElementById("adminLoginBtn").onclick = adminSignIn;
-  document.getElementById("adminCreateBtn").onclick = adminCreate;
-  document.getElementById("signOutBtn").onclick = () => signOut(auth);
-  signOutLink.onclick = () => signOut(auth);
-
-
-  // ----------- STRONG AUTH PROTECTION -----------
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      // Not logged in → Only show admin login box
-      authForm.classList.remove("hidden");
-      adminInfo.classList.add("hidden");
-      signOutLink.classList.add("hidden");
-      reqListEl.innerHTML = "<div class='small'>Login required.</div>";
-      return;
-    }
-
-    const email = user.email ?? "";
-
-    if (!adminEmails.includes(email)) {
-      // ❌ NOT AN ADMIN — auto kick
-      alert("You are not authorized to access the admin panel.");
-      await signOut(auth);
-      window.location.href = "index.html";
-      return;
-    }
-
-    // ✔ Authorized admin
-    authForm.classList.add("hidden");
-    adminInfo.classList.remove("hidden");
-    adminEmailText.textContent = email;
-    signOutLink.classList.remove("hidden");
-
-    loadRequests(true);
-  });
-
-
-  // ------------ AUTH FUNCTIONS ------------
-  async function adminSignIn() {
-    const email = document.getElementById("adminEmail").value.trim();
-    const pass = document.getElementById("adminPass").value;
-
-    if (!email || !pass)
-      return showAlert(addGoldAlert, "Enter admin email & password.");
-
-    try {
-      await signInWithEmailAndPassword(auth, email, pass);
-      showAlert(addGoldAlert, "Logged in!", true);
-    } catch (e) {
-      showAlert(addGoldAlert, "Login failed: " + e.message);
-    }
-  }
-
-  async function adminCreate() {
-    const email = document.getElementById("adminEmail").value.trim();
-    const pass = document.getElementById("adminPass").value;
-
-    if (!email || !pass)
-      return showAlert(addGoldAlert, "Enter email + password.");
-
-    try {
-      await createUserWithEmailAndPassword(auth, email, pass);
-      showAlert(addGoldAlert, "Admin created. Add email to adminEmails list!");
-    } catch (e) {
-      showAlert(addGoldAlert, "Create failed: " + e.message);
-    }
-  }
-
-
-  // ------------ REQUESTS LOADING ------------
-  function loadRequests(enabled = false) {
-    const formsRef = ref(db, "forms");
-    onValue(formsRef, (snapshot) => {
-      const data = snapshot.val() || {};
-      reqListEl.innerHTML = "";
-      let found = 0;
-
-      for (const username in data) {
-        const form = data[username];
-        if (!form || form.status !== "pending") continue;
-        found++;
-
-        const div = document.createElement("div");
-        div.className = "request";
-        div.innerHTML = `
-          <div style="display:flex;justify-content:space-between;">
-            <div>
-              <b>${username}</b>
-              <div class="small">Age: ${form.age}</div>
-              <div class="small">Discord: ${form.discord}</div>
-              <div style="margin-top:8px">${form.whyPlay}</div>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:6px;">
-              <button ${enabled ? "" : "disabled"} onclick="approveUser('${username}')">Approve</button>
-              <button ${enabled ? "" : "disabled"} onclick="declineUser('${username}')">Decline</button>
-            </div>
+// Load pending forms
+function loadRequests(enabled = false){
+  const formsRef = ref(db, "forms");
+  onValue(formsRef, (snap) => {
+    const data = snap.val() || {};
+    requestList.innerHTML = "";
+    let found = 0;
+    for (const uid in data) {
+      const f = data[uid];
+      if (!f || f.status !== "pending") continue;
+      found++;
+      const div = document.createElement("div");
+      div.className = "request";
+      div.innerHTML = `
+        <div style="display:flex;justify-content:space-between">
+          <div>
+            <b>${f.username}</b>
+            <div class="small">Age: ${f.age} — Discord: ${f.discord}</div>
+            <div style="margin-top:8px">${f.whyPlay}</div>
           </div>
-        `;
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button ${enabled ? "" : "disabled"} onclick="approveForm('${uid}')">Approve</button>
+            <button ${enabled ? "" : "disabled"} onclick="declineForm('${uid}')">Decline</button>
+          </div>
+        </div>
+      `;
+      requestList.appendChild(div);
+    }
+    if (!found) requestList.innerHTML = "<div class='small'>No pending requests.</div>";
+  });
+}
 
-        reqListEl.appendChild(div);
-      }
-
-      if (!found)
-        reqListEl.innerHTML = "<div class='small'>No pending requests.</div>";
-    });
-  }
-
-
-  // ------------ APPROVE / DECLINE ------------
-  window.approveUser = async (username) => {
-    const formSnap = await get(ref(db, "forms/" + username));
-    if (!formSnap.exists())
-      return showAlert(requestsAlert, "Form not found");
-
-    const form = formSnap.val();
-
-    await update(ref(db, "forms/" + username), { status: "approved" });
-
+// Approve: create users/{uid} starter stats and set forms/{uid}.status="approved"
+window.approveForm = async function(uid){
+  try {
+    const formSnap = await get(ref(db, `forms/${uid}`));
+    if (!formSnap.exists()) return showAlert(requestsAlert, "Form not found.");
+    const f = formSnap.val();
     const starter = {
-      username,
+      username: f.username,
+      role: "user",
       level: 1,
       xp: 0,
+      tokens: 0,
       goldsUnlocked: 0,
       totalGolds: 0,
       packsOpened: 0,
       messages: 0,
+      profilePicture: "/images/default.png",
       createdAt: Date.now()
     };
-
-    await set(ref(db, "users/" + username), starter);
-    showAlert(requestsAlert, "Approved " + username, true);
-  };
-
-  window.declineUser = async (username) => {
-    await update(ref(db, "forms/" + username), { status: "declined" });
-    showAlert(requestsAlert, "Declined " + username);
-  };
-
-
-  // ------------ GOLD CREATION ------------
-  document.getElementById("add-gold-btn").onclick = async () => {
-    const name = document.getElementById("gold-name").value.trim();
-    const img = document.getElementById("gold-image").value.trim();
-    const rarity = document.getElementById("gold-rarity").value;
-
-    if (!name) return showAlert(addGoldAlert, "Enter name.");
-    if (!img) return showAlert(addGoldAlert, "Enter image URL.");
-
-    const safe = name.replace(/\./g, "_");
-
-    await set(ref(db, "golds/" + safe), {
-      name,
-      img,
-      rarity,
-      createdAt: Date.now()
-    });
-
-    showAlert(addGoldAlert, "Added gold!", true);
-  };
-
-
-  // ------------ HELPERS ------------
-  function showAlert(box, msg, success = false) {
-    box.style.display = "block";
-    box.style.background = success
-      ? "rgba(40,180,40,0.15)"
-      : "rgba(255,0,0,0.15)";
-    box.textContent = msg;
-    setTimeout(() => (box.style.display = "none"), 4000);
+    await set(ref(db, `users/${uid}`), starter);
+    await update(ref(db, `forms/${uid}`), { status: "approved" });
+    showAlert(requestsAlert, `Approved ${f.username}`, true);
+  } catch (e) {
+    console.error(e);
+    showAlert(requestsAlert, "Approve failed: " + (e.message || e));
   }
+};
 
-  loadRequests(false);
+// Decline: set status "declined" and remove username reservation so name returns available
+window.declineForm = async function(uid){
+  try {
+    const formSnap = await get(ref(db, `forms/${uid}`));
+    if (!formSnap.exists()) return showAlert(requestsAlert, "Form not found.");
+    const f = formSnap.val();
+    // remove username mapping if exists
+    await remove(ref(db, `usernames/${f.username}`)).catch(()=>{});
+    await update(ref(db, `forms/${uid}`), { status: "declined" });
+    showAlert(requestsAlert, `Declined ${f.username}`);
+  } catch (e) {
+    console.error(e);
+    showAlert(requestsAlert, "Decline failed: " + (e.message || e));
+  }
+};
+
+// Add gold
+document.getElementById("add-gold-btn").onclick = async () => {
+  const name = document.getElementById("gold-name").value.trim();
+  const img = document.getElementById("gold-image").value.trim();
+  const rarity = document.getElementById("gold-rarity").value;
+  if (!name) return showAlert(addGoldAlert, "Enter name.");
+  if (!img) return showAlert(addGoldAlert, "Enter image URL.");
+  const safe = name.replace(/\./g,'_');
+  try {
+    await set(ref(db, `golds/${safe}`), { name, img, rarity, createdAt: Date.now() });
+    showAlert(addGoldAlert, "Added gold!", true);
+    document.getElementById("gold-name").value = "";
+    document.getElementById("gold-image").value = "";
+  } catch (e) {
+    console.error(e);
+    showAlert(addGoldAlert, "Add failed: " + (e.message || e));
+  }
+};
+
+// clear chat
+document.getElementById("clear-chat").onclick = async () => {
+  if (!confirm("Clear ALL chat messages from Realtime Database? This cannot be undone.")) return;
+  try {
+    await remove(ref(db, "messages"));
+    showAlert(addGoldAlert, "Chat cleared", true);
+  } catch (e) {
+    console.error(e);
+    showAlert(addGoldAlert, "Clear failed.");
+  }
+};
+
+// refresh
+document.getElementById("refresh-requests").onclick = () => loadRequests(true);
+
 </script>
-
 </body>
 </html>
