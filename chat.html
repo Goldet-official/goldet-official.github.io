@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Goldet — Chat</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet"/>
+
+<style>
+    body{
+        margin:0;
+        background:#050505;
+        color:white;
+        font-family:Arial;
+    }
+
+    /* SIDEBAR */
+    .sidebar{
+        position:fixed;left:0;top:0;bottom:0;width:240px;
+        background:linear-gradient(180deg,#1a1200,#2e1a03);
+        border-right:2px solid rgba(212,175,55,0.06);
+        padding:22px;
+    }
+    .logo{
+        font-family:'Titan One';
+        color:#ffd700;
+        font-size:34px;
+    }
+    .nav a{
+        display:block;padding:10px;margin:7px 0;
+        color:white;text-decoration:none;
+        border-radius:8px;
+    }
+    .nav a:hover{
+        background:rgba(212,175,55,0.08);
+    }
+
+    .main{
+        margin-left:260px;
+        padding:20px;
+    }
+
+    h1{
+        font-family:'Titan One';
+        color:#ffdf80;
+    }
+
+    #chatBox{
+        height:65vh;
+        overflow-y:auto;
+        border:1px solid rgba(212,175,55,0.08);
+        padding:15px;
+        border-radius:10px;
+        background:#0e0e0e;
+    }
+
+    .msg{
+        margin:8px 0;
+        padding:10px;
+        background:rgba(255,255,255,0.05);
+        border-radius:10px;
+    }
+
+    .msg .name{
+        font-weight:bold;
+    }
+
+    .badge{
+        padding:2px 6px;
+        margin-left:5px;
+        border-radius:6px;
+        font-size:11px;
+        font-weight:bold;
+    }
+
+    .badge.admin{background:#ff4747;color:white;}
+    .badge.owner{background:#ffbf00;color:black;}
+    .badge.mod{background:#4fa3ff;}
+    .badge.dev{background:#9b59ff;color:white;}
+    .badge.member{background:#aaa;}
+
+    #msgInput{
+        width:80%;
+        padding:12px;
+        border-radius:10px;
+        border:none;
+        outline:none;
+        background:#1a1a1a;
+        color:white;
+    }
+
+    button{
+        padding:12px 20px;
+        border-radius:10px;
+        border:none;
+        background:linear-gradient(90deg,#ffd700,#b8860b);
+        font-weight:bold;
+        cursor:pointer;
+    }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <div class="logo">Goldet</div>
+    <nav class="nav">
+        <a href="stats.html">Stats</a>
+        <a href="leaderboard.html">Leaderboard</a>
+        <a href="chat.html">Chat</a>
+        <a href="market.html">Market</a>
+        <a href="golds.html">Golds</a>
+        <a href="settings.html">Settings</a>
+    </nav>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+    <h1>Global Chat</h1>
+
+    <div id="chatBox"></div>
+
+    <div style="margin-top:15px;">
+        <input id="msgInput" placeholder="Type message…">
+        <button onclick="sendMsg()">Send</button>
+    </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { 
+    getDatabase, ref, push, onChildAdded, get, update 
+} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
+    authDomain: "goldet-504aa.firebaseapp.com",
+    databaseURL: "https://goldet-504aa-default-rtdb.firebaseio.com",
+    projectId: "goldet-504aa",
+    storageBucket: "goldet-504aa.appspot.com",
+    messagingSenderId: "36312610816",
+    appId: "1:36312610816:web:ded0576d78ebf1ceba00e5",
+    measurementId: "G-TTJNTC824V"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const user = localStorage.getItem("currentUser");
+
+if (!user) location.href = "login.html";
+
+let userData = {};
+
+// LOAD USER DATA (badge + colors)
+async function loadUser(){
+    const snap = await get(ref(db, "users/" + user));
+    userData = snap.val() || {};
+
+    if (!userData.badge) userData.badge = "member"; // default
+    if (!userData.nameColor) userData.nameColor = "#ffd700";
+    if (!userData.textColor) userData.textColor = "#ffffff";
+}
+loadUser();
+
+
+// ANTI-SPAM
+let lastMessage = 0;
+const cooldown = 1500; // 1.5 sec
+
+// SEND MESSAGE
+async function sendMsg(){
+    const now = Date.now();
+    if (now - lastMessage < cooldown){
+        alert("You're sending messages too fast.");
+        return;
+    }
+
+    lastMessage = now;
+
+    const msg = document.getElementById("msgInput").value.trim();
+    if (!msg) return;
+
+    await push(ref(db, "chat"), {
+        user: user,
+        badge: userData.badge,
+        nameColor: userData.nameColor,
+        textColor: userData.textColor,
+        message: msg,
+        time: Date.now()
+    });
+
+    // Update user's messages sent stat
+    const userRef = ref(db, "users/" + user);
+    const snap = await get(userRef);
+    const d = snap.val() || {};
+
+    d.messagesSent = (d.messagesSent || 0) + 1;
+    update(userRef, d);
+
+    document.getElementById("msgInput").value = "";
+}
+
+// DISPLAY CHAT IN REALTIME
+const chatBox = document.getElementById("chatBox");
+
+onChildAdded(ref(db, "chat"), (snapshot)=>{
+    const msg = snapshot.val();
+    const div = document.createElement("div");
+    div.className = "msg";
+
+    // create badge
+    let badge = "";
+    if (msg.badge){
+        badge = `<span class="badge ${msg.badge}">${msg.badge.toUpperCase()}</span>`;
+    }
+
+    div.innerHTML = `
+        <span class="name" style="color:${msg.nameColor}">${msg.user}</span>
+        ${badge}
+        <div style="color:${msg.textColor};margin-top:5px;">
+            ${msg.message}
+        </div>
+    `;
+
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+});
+</script>
+
+</body>
+</html>
