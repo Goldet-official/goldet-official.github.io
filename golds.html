@@ -1,67 +1,50 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Golds | Goldet</title>
-<link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Goldet — Your Golds</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet" />
 
 <style>
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;height:100%;font-family:Arial,system-ui;background:linear-gradient(180deg,#050505,#0b0b0b);color:#fff}
-.sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;
-    background: linear-gradient(180deg,#1a1200,#2e1a03);
+  *{box-sizing:border-box}
+  body,html{margin:0;padding:0;font-family:Arial,system-ui;background:#080808;color:white}
+
+  .sidebar{position:fixed;top:0;left:0;bottom:0;width:240px;padding:22px;
+    background:linear-gradient(180deg,#1a1200,#2e1a03);
     border-right:2px solid rgba(212,175,55,0.06);
-    padding:22px;display:flex;flex-direction:column;gap:12px}
+    display:flex;flex-direction:column;gap:12px}
   .sidebar a{color:#ffd;text-decoration:none;padding:10px;border-radius:8px}
   .sidebar a:hover{background:rgba(212,175,55,0.08)}
   .logo{font-family:'Titan One';font-size:34px;color:#ffd700}
-.main{margin-left:260px;padding:30px;min-height:100vh}
-h1{font-family:'Titan One',cursive;color:#ffdf80;margin:0 0 18px}
-.card{background:#0f0f0f;border:2px solid rgba(212,175,55,0.12);padding:18px;border-radius:12px;box-shadow:0 6px 24px rgba(212,175,55,0.06)}
-.gold-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-top:16px}
-.gold-item{background:#111;border:1px solid rgba(212,175,55,0.10);padding:12px;border-radius:10px;text-align:center;color:#ffdf80;font-weight:800;font-size:20px}
-@media(max-width:900px){.main{margin-left:0;padding:16px}}
+
+  .main{margin-left:260px;padding:26px}
+  h1{font-family:'Titan One';color:#ffd700}
+
+  /* Gold list */
+  .gold-list{margin-top:20px;display:grid;grid-template-columns:repeat(auto-fill, minmax(240px,1fr));gap:18px}
+  .gold-card{
+    background:#111;border:2px solid rgba(212,175,55,0.12);
+    border-radius:14px;padding:18px;
+    box-shadow:0 6px 20px rgba(212,175,55,0.08)
+  }
+
+  .gold-name{font-size:20px;font-weight:700;margin-bottom:6px}
+  .gold-rarity{font-size:14px}
+
+  .rarity-common{color:#bbbbbb}
+  .rarity-uncommon{color:#5cb85c}
+  .rarity-rare{color:#3399ff}
+  .rarity-legendary{color:#ffd700}
+
+  .total-box{
+    background:#111;border:2px solid rgba(212,175,55,0.12);
+    padding:14px;border-radius:12px;
+    font-size:18px;font-weight:700;color:#ffd700;
+    width: fit-content;margin-bottom:20px
+  }
 </style>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
-  authDomain: "goldet-504aa.firebaseapp.com",
-  databaseURL: "https://goldet-504aa-default-rtdb.firebaseio.com",
-  projectId: "goldet-504aa",
-  storageBucket: "goldet-504aa.firebasestorage.app",
-  messagingSenderId: "36312610816",
-  appId: "1:36312610816:web:ded0576d78ebf1ceba00e5"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const auth = getAuth();
-
-const goldContainer = document.getElementById("goldContainer");
-
-onAuthStateChanged(auth, user => {
-  if (!user) return;
-
-  const userRef = ref(db, `users/${user.uid}/golds`);
-  onValue(userRef, snap => {
-    goldContainer.innerHTML = "";
-    const goldData = snap.val() || {};
-
-    Object.keys(goldData).forEach(key => {
-      const item = document.createElement("div");
-      item.className = "gold-item";
-      item.textContent = key;
-      goldContainer.appendChild(item);
-    });
-  });
-});
-</script>
 </head>
 <body>
 
@@ -74,6 +57,7 @@ onAuthStateChanged(auth, user => {
   <a href="golds.html">Golds</a>
   <a href="admin.html">Admin</a>
   <a href="settings.html">Settings</a>
+
   <div style="margin-top:auto">
     <div style="color:#d9c08c;font-size:13px">Signed in as</div>
     <div id="sidebarUser" style="font-weight:700;color:#ffd700">—</div>
@@ -82,11 +66,82 @@ onAuthStateChanged(auth, user => {
 
 <div class="main">
   <h1>Your Golds</h1>
-  <div class="card">
-    <h2 style="color:#ffd700;margin:0 0 10px;font-family:'Titan One'">Unlocked Golds</h2>
-    <div id="goldContainer" class="gold-list"></div>
-  </div>
+
+  <div id="total" class="total-box">Total Golds: 0</div>
+
+  <div id="goldList" class="gold-list"></div>
 </div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
+  authDomain: "goldet-504aa.firebaseapp.com",
+  databaseURL: "https://goldet-504aa-default-rtdb.firebaseio.com",
+  projectId: "goldet-504aa",
+  storageBucket: "goldet-504aa.appspot.com",
+  messagingSenderId: "36312610816",
+  appId: "1:36312610816:web:ded0576d78ebf1ceba00e5",
+  measurementId: "G-TTJNTC824V"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+const sidebarUser = document.getElementById("sidebarUser");
+const goldList = document.getElementById("goldList");
+const totalBox = document.getElementById("total");
+
+let uid = null;
+
+onAuthStateChanged(auth, user => {
+  if(!user){
+    window.location.href = "login.html";
+    return;
+  }
+
+  uid = user.uid;
+  sidebarUser.textContent = user.email;
+
+  loadGolds();
+});
+
+function loadGolds(){
+  const userGoldRef = ref(db, `users/${uid}/stats/golds`);
+  
+  onValue(userGoldRef, snap => {
+    const golds = snap.val() || {};
+
+    goldList.innerHTML = "";
+    const total = Object.keys(golds).length;
+    totalBox.textContent = `Total Golds: ${total}`;
+
+    Object.values(golds).forEach(g => {
+      const card = document.createElement("div");
+      card.className = "gold-card";
+
+      const rarityClass = {
+        "Common": "rarity-common",
+        "Uncommon": "rarity-uncommon",
+        "Rare": "rarity-rare",
+        "Legendary": "rarity-legendary"
+      }[g.rarity] || "rarity-common";
+
+      card.innerHTML = `
+        <div class="gold-name">${g.name}</div>
+        <div class="gold-rarity ${rarityClass}">Rarity: ${g.rarity}</div>
+      `;
+
+      goldList.appendChild(card);
+    });
+  });
+}
+</script>
 
 </body>
 </html>
