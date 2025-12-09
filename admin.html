@@ -9,10 +9,13 @@
   *{box-sizing:border-box}
   html,body{height:100%;margin:0;font-family:Arial,system-ui;background:linear-gradient(180deg,#050505,#0b0b0b);color:#fff}
   /* Sidebar */
-  .sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;background: linear-gradient(180deg,#1a1200,#2e1a03);border-right: 2px solid rgba(212,175,55,0.06);padding:22px;display:flex;flex-direction:column;gap:12px}
-  .logo{font-family:'Titan One',cursive;color:#ffd700;font-size:34px;text-shadow:0 0 8px rgba(212,175,55,0.15)}
-  .nav a{display:block;color:#ffd;text-decoration:none;padding:10px;border-radius:8px;margin:6px 0;background:transparent}
-  .nav a:hover{background:rgba(212,175,55,0.06)}
+  .sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;
+    background: linear-gradient(180deg,#1a1200,#2e1a03);
+    border-right:2px solid rgba(212,175,55,0.06);
+    padding:22px;display:flex;flex-direction:column;gap:12px}
+  .sidebar a{color:#ffd;text-decoration:none;padding:10px;border-radius:8px}
+  .sidebar a:hover{background:rgba(212,175,55,0.08)}
+  .logo{font-family:'Titan One';font-size:34px;color:#ffd700}
   /* Main */
   .main{margin-left:260px;padding:30px;min-height:100vh}
   h1{font-family:'Titan One',cursive;color:#ffdf80;margin:0 0 12px}
