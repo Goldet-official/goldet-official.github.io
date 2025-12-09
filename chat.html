@@ -1,231 +1,218 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Goldet — Chat</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Goldet | Chat</title>
 
 <style>
-    body{
-        margin:0;
-        background:#050505;
-        color:white;
-        font-family:Arial;
-    }
+  body {
+    margin: 0;
+    font-family: Arial, system-ui;
+    background: #0b0b0b;
+    color: white;
+  }
 
-    /* SIDEBAR */
-    .sidebar{
-        position:fixed;left:0;top:0;bottom:0;width:240px;
-        background:linear-gradient(180deg,#1a1200,#2e1a03);
-        border-right:2px solid rgba(212,175,55,0.06);
-        padding:22px;
-    }
-    .logo{
-        font-family:'Titan One';
-        color:#ffd700;
-        font-size:34px;
-    }
-    .nav a{
-        display:block;padding:10px;margin:7px 0;
-        color:white;text-decoration:none;
-        border-radius:8px;
-    }
-    .nav a:hover{
-        background:rgba(212,175,55,0.08);
-    }
+  .sidebar {
+    position: fixed;
+    top: 0; bottom: 0; left: 0;
+    width: 240px;
+    background: linear-gradient(180deg,#1a1200,#2e1a03);
+    border-right: 2px solid rgba(212,175,55,0.06);
+    padding: 20px;
+  }
 
-    .main{
-        margin-left:260px;
-        padding:20px;
-    }
+  .sidebar a {
+    display: block;
+    color: #ffe;
+    text-decoration: none;
+    padding: 10px;
+    margin: 6px 0;
+    border-radius: 6px;
+  }
 
-    h1{
-        font-family:'Titan One';
-        color:#ffdf80;
-    }
+  .sidebar a:hover {
+    background: rgba(212,175,55,0.10);
+  }
 
-    #chatBox{
-        height:65vh;
-        overflow-y:auto;
-        border:1px solid rgba(212,175,55,0.08);
-        padding:15px;
-        border-radius:10px;
-        background:#0e0e0e;
-    }
+  .main {
+    margin-left: 260px;
+    padding: 20px;
+  }
 
-    .msg{
-        margin:8px 0;
-        padding:10px;
-        background:rgba(255,255,255,0.05);
-        border-radius:10px;
-    }
+  h1 {
+    font-family: 'Titan One', cursive;
+    color: #ffd700;
+    margin-bottom: 10px;
+  }
 
-    .msg .name{
-        font-weight:bold;
-    }
+  /* Chat UI */
+  #chatBox {
+    background: #111;
+    border: 2px solid rgba(212,175,55,0.12);
+    height: 70vh;
+    overflow-y: scroll;
+    padding: 12px;
+    border-radius: 10px;
+  }
 
-    .badge{
-        padding:2px 6px;
-        margin-left:5px;
-        border-radius:6px;
-        font-size:11px;
-        font-weight:bold;
-    }
+  .msg {
+    margin-bottom: 14px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
 
-    .badge.admin{background:#ff4747;color:white;}
-    .badge.owner{background:#ffbf00;color:black;}
-    .badge.mod{background:#4fa3ff;}
-    .badge.dev{background:#9b59ff;color:white;}
-    .badge.member{background:#aaa;}
+  .msg-username {
+    font-weight: bold;
+    font-size: 15px;
+  }
 
-    #msgInput{
-        width:80%;
-        padding:12px;
-        border-radius:10px;
-        border:none;
-        outline:none;
-        background:#1a1a1a;
-        color:white;
-    }
+  .msg-text {
+    margin-left: 10px;
+    font-size: 15px;
+  }
 
-    button{
-        padding:12px 20px;
-        border-radius:10px;
-        border:none;
-        background:linear-gradient(90deg,#ffd700,#b8860b);
-        font-weight:bold;
-        cursor:pointer;
-    }
+  #inputRow {
+    margin-top: 12px;
+    display: flex;
+    gap: 10px;
+  }
+
+  #messageInput {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+  }
+
+  #sendBtn {
+    background: linear-gradient(90deg, #ffd700, #b8860b);
+    border: none;
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #111;
+    font-weight: bold;
+  }
 </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
-    <div class="logo">Goldet</div>
-    <nav class="nav">
-        <a href="stats.html">Stats</a>
-        <a href="leaderboard.html">Leaderboard</a>
-        <a href="chat.html">Chat</a>
-        <a href="market.html">Market</a>
-        <a href="golds.html">Golds</a>
-        <a href="settings.html">Settings</a>
-    </nav>
+  <a href="stats.html">📊 Stats</a>
+  <a href="chat.html">💬 Chat</a>
+  <a href="leaderboard.html">🏆 Leaderboard</a>
+  <a href="login.html">🚪 Logout</a>
 </div>
 
-<!-- MAIN -->
 <div class="main">
-    <h1>Global Chat</h1>
+  <h1>Global Chat</h1>
 
-    <div id="chatBox"></div>
+  <div id="chatBox"></div>
 
-    <div style="margin-top:15px;">
-        <input id="msgInput" placeholder="Type message…">
-        <button onclick="sendMsg()">Send</button>
-    </div>
+  <div id="inputRow">
+    <input id="messageInput" type="text" placeholder="Type a message...">
+    <button id="sendBtn">Send</button>
+  </div>
 </div>
 
+<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { 
-    getDatabase, ref, push, onChildAdded, get, update 
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+import { getDatabase, ref, push, onChildAdded, update, get } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
-    authDomain: "goldet-504aa.firebaseapp.com",
-    databaseURL: "https://goldet-504aa-default-rtdb.firebaseio.com",
-    projectId: "goldet-504aa",
-    storageBucket: "goldet-504aa.appspot.com",
-    messagingSenderId: "36312610816",
-    appId: "1:36312610816:web:ded0576d78ebf1ceba00e5",
-    measurementId: "G-TTJNTC824V"
+  apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
+  authDomain: "goldet-504aa.firebaseapp.com",
+  databaseURL: "https://goldet-504aa-default-rtdb.firebaseio.com",
+  projectId: "goldet-504aa",
+  storageBucket: "goldet-504aa.appspot.com",
+  messagingSenderId: "36312610816",
+  appId: "1:36312610816:web:ded0576d78ebf1ceba00e5"
 };
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = getDatabase(app);
-const user = localStorage.getItem("currentUser");
 
-if (!user) location.href = "login.html";
+let currentUser = null;
+let currentUID = null;
+let chatColor = { name: "#fff", text: "#fff" };
+let username = "";
 
-let userData = {};
+// Wait for auth
+onAuthStateChanged(auth, async (user) => {
+  if (!user) return window.location = "login.html";
+  currentUID = user.uid;
 
-// LOAD USER DATA (badge + colors)
-async function loadUser(){
-    const snap = await get(ref(db, "users/" + user));
-    userData = snap.val() || {};
-
-    if (!userData.badge) userData.badge = "member"; // default
-    if (!userData.nameColor) userData.nameColor = "#ffd700";
-    if (!userData.textColor) userData.textColor = "#ffffff";
-}
-loadUser();
-
-
-// ANTI-SPAM
-let lastMessage = 0;
-const cooldown = 1500; // 1.5 sec
-
-// SEND MESSAGE
-async function sendMsg(){
-    const now = Date.now();
-    if (now - lastMessage < cooldown){
-        alert("You're sending messages too fast.");
-        return;
-    }
-
-    lastMessage = now;
-
-    const msg = document.getElementById("msgInput").value.trim();
-    if (!msg) return;
-
-    await push(ref(db, "chat"), {
-        user: user,
-        badge: userData.badge,
-        nameColor: userData.nameColor,
-        textColor: userData.textColor,
-        message: msg,
-        time: Date.now()
-    });
-
-    // Update user's messages sent stat
-    const userRef = ref(db, "users/" + user);
-    const snap = await get(userRef);
-    const d = snap.val() || {};
-
-    d.messagesSent = (d.messagesSent || 0) + 1;
-    update(userRef, d);
-
-    document.getElementById("msgInput").value = "";
-}
-
-// DISPLAY CHAT IN REALTIME
-const chatBox = document.getElementById("chatBox");
-
-onChildAdded(ref(db, "chat"), (snapshot)=>{
-    const msg = snapshot.val();
-    const div = document.createElement("div");
-    div.className = "msg";
-
-    // create badge
-    let badge = "";
-    if (msg.badge){
-        badge = `<span class="badge ${msg.badge}">${msg.badge.toUpperCase()}</span>`;
-    }
-
-    div.innerHTML = `
-        <span class="name" style="color:${msg.nameColor}">${msg.user}</span>
-        ${badge}
-        <div style="color:${msg.textColor};margin-top:5px;">
-            ${msg.message}
-        </div>
-    `;
-
-    chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
+  // Load user profile
+  const snap = await get(ref(db, `users/${currentUID}`));
+  if (snap.exists()) {
+    const data = snap.val();
+    username = data.username;
+    chatColor = data.chatColor || chatColor;
+  }
 });
+
+// Display incoming messages
+const chatBox = document.getElementById("chatBox");
+const msgRef = ref(db, "chat/messages");
+
+onChildAdded(msgRef, (snap) => {
+  const msg = snap.val();
+
+  const div = document.createElement("div");
+  div.className = "msg";
+
+  const uname = document.createElement("span");
+  uname.className = "msg-username";
+  uname.textContent = msg.username + ": ";
+  uname.style.color = msg.chatColor?.name || "#fff";
+
+  const text = document.createElement("span");
+  text.className = "msg-text";
+  text.textContent = msg.text;
+  text.style.color = msg.chatColor?.text || "#fff";
+
+  div.appendChild(uname);
+  div.appendChild(text);
+
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
+});
+
+// Send message
+document.getElementById("sendBtn").addEventListener("click", sendMessage);
+document.getElementById("messageInput").addEventListener("keypress", (e) => {
+  if (e.key === "Enter") sendMessage();
+});
+
+async function sendMessage() {
+  const input = document.getElementById("messageInput");
+  const text = input.value.trim();
+  if (!text) return;
+
+  await push(msgRef, {
+    uid: currentUID,
+    username,
+    text,
+    chatColor,
+    timestamp: Date.now()
+  });
+
+  // Add +1 to messagesSent
+  const userRef = ref(db, `users/${currentUID}/stats`);
+  const statsSnap = await get(userRef);
+  const stats = statsSnap.val() || { messagesSent: 0 };
+
+  await update(userRef, {
+    messagesSent: (stats.messagesSent || 0) + 1
+  });
+
+  input.value = "";
+}
 </script>
 
 </body>
