@@ -6,74 +6,129 @@
 <title>Goldet | Chat</title>
 <link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet">
 
-
 <style>
-     *{box-sizing:border-box}
-  html,body{margin:0;padding:0;height:100%;font-family:Arial,system-ui;background:linear-gradient(180deg,#050505,#0b0b0b);color:#fff}
-
-  /* SIDEBAR */
-   .sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;background: linear-gradient(180deg,#1a1200,#2e1a03);border-right: 2px solid rgba(212,175,55,0.06);padding:22px;display:flex;flex-direction:column;gap:12px}
-  .logo{font-family:'Titan One',cursive;color:#ffd700;font-size:34px;text-shadow:0 0 8px rgba(212,175,55,0.15)}
-  .nav a{display:block;color:#ffd;text-decoration:none;padding:10px;border-radius:8px;margin:6px 0;background:transparent}
-  .nav a:hover{background:rgba(212,175,55,0.06)}
-
-  /* MAIN */
-  .main{margin-left:260px;padding:30px;min-height:100vh}
-  h1{font-family:'Titan One';color:#ffdf80;margin:0 0 12px}
-
-  
-  /* Chat UI */
-  #chatBox {
-    background: #111;
-    border: 2px solid rgba(212,175,55,0.12);
-    height: 70vh;
-    overflow-y: scroll;
-    padding: 12px;
-    border-radius: 10px;
+  *{box-sizing:border-box}
+  html,body{
+    margin:0;padding:0;height:100%;
+    font-family:Arial,system-ui;
+    background:linear-gradient(180deg,#050505,#0b0b0b);
+    color:#fff;
   }
 
-  .msg {
-    margin-bottom: 14px;
-    padding-bottom: 6px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+  /* --- SIDEBAR --- */
+  .sidebar{
+    position:fixed;
+    left:0;top:0;bottom:0;
+    width:240px;
+    background:linear-gradient(180deg,#1a1200,#2e1a03);
+    border-right:2px solid rgba(212,175,55,0.06);
+    padding:22px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    z-index:5;
   }
 
-  .msg-username {
-    font-weight: bold;
-    font-size: 15px;
+  .logo{
+    font-family:'Titan One',cursive;
+    color:#ffd700;
+    font-size:34px;
+    text-shadow:0 0 8px rgba(212,175,55,0.15);
+    margin-bottom:10px;
   }
 
-  .msg-text {
-    margin-left: 10px;
-    font-size: 15px;
+  .nav a{
+    display:block;
+    color:#ffd;
+    text-decoration:none;
+    padding:10px;
+    border-radius:8px;
+    margin:4px 0;
+    background:transparent;
+    font-size:16px;
+  }
+  .nav a:hover{
+    background:rgba(212,175,55,0.08);
   }
 
-  #inputRow {
-    margin-top: 12px;
-    display: flex;
-    gap: 10px;
+  /* --- MAIN AREA --- */
+  .main{
+    margin-left:260px;
+    padding:30px;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
   }
 
-  #messageInput {
-    flex: 1;
-    padding: 12px;
-    border-radius: 8px;
-    border: none;
-    outline: none;
+  h1{
+    font-family:'Titan One';
+    color:#ffdf80;
+    margin-top:10px;
+    margin-bottom:20px;
+    font-size:34px;
+    text-align:center;
   }
 
-  #sendBtn {
-    background: linear-gradient(90deg, #ffd700, #b8860b);
-    border: none;
-    padding: 12px 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    color: #111;
-    font-weight: bold;
+  /* --- CHAT UI --- */
+  #chatBox{
+    background:#111;
+    border:2px solid rgba(212,175,55,0.12);
+    width:80%;
+    max-width:850px;
+    height:60vh;
+    overflow-y:auto;
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:20px;
+  }
+
+  .msg{
+    margin-bottom:14px;
+    padding-bottom:6px;
+    border-bottom:1px solid rgba(255,255,255,0.05);
+  }
+
+  .msg-username{
+    font-weight:bold;
+    font-size:15px;
+  }
+
+  .msg-text{
+    margin-left:10px;
+    font-size:15px;
+  }
+
+  #inputRow{
+    width:80%;
+    max-width:850px;
+    display:flex;
+    gap:10px;
+  }
+
+  #messageInput{
+    flex:1;
+    padding:12px;
+    border-radius:8px;
+    border:none;
+    outline:none;
+  }
+
+  #sendBtn{
+    background:linear-gradient(90deg,#ffd700,#b8860b);
+    border:none;
+    padding:12px 20px;
+    border-radius:8px;
+    cursor:pointer;
+    color:#111;
+    font-weight:bold;
   }
 </style>
 </head>
+
 <body>
+
+<div class="sidebar">
   <div class="logo">Goldet</div>
   <div class="nav">
     <a href="stats.html">📊 Stats</a>
@@ -116,15 +171,14 @@ const db = getDatabase(app);
 
 let currentUser = null;
 let currentUID = null;
-let chatColor = { name: "#fff", text: "#fff" };
+let chatColor = { name:"#fff", text:"#fff" };
 let username = "";
 
-// Wait for auth
+// VERIFY LOGIN + LOAD USER PROFILE
 onAuthStateChanged(auth, async (user) => {
   if (!user) return window.location = "login.html";
   currentUID = user.uid;
 
-  // Load user profile
   const snap = await get(ref(db, `users/${currentUID}`));
   if (snap.exists()) {
     const data = snap.val();
@@ -133,7 +187,7 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-// Display incoming messages
+// CHAT DISPLAY
 const chatBox = document.getElementById("chatBox");
 const msgRef = ref(db, "chat/messages");
 
@@ -160,13 +214,13 @@ onChildAdded(msgRef, (snap) => {
   chatBox.scrollTop = chatBox.scrollHeight;
 });
 
-// Send message
+// SEND MESSAGE
 document.getElementById("sendBtn").addEventListener("click", sendMessage);
 document.getElementById("messageInput").addEventListener("keypress", (e) => {
   if (e.key === "Enter") sendMessage();
 });
 
-async function sendMessage() {
+async function sendMessage(){
   const input = document.getElementById("messageInput");
   const text = input.value.trim();
   if (!text) return;
@@ -179,12 +233,11 @@ async function sendMessage() {
     timestamp: Date.now()
   });
 
-  // Add +1 to messagesSent
-  const userRef = ref(db, `users/${currentUID}/stats`);
-  const statsSnap = await get(userRef);
-  const stats = statsSnap.val() || { messagesSent: 0 };
+  const statsRef = ref(db, `users/${currentUID}/stats`);
+  const statsSnap = await get(statsRef);
+  const stats = statsSnap.val() || {};
 
-  await update(userRef, {
+  await update(statsRef, {
     messagesSent: (stats.messagesSent || 0) + 1
   });
 
