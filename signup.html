@@ -8,80 +8,32 @@
 <link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet" />
 
 <style>
-  body {
-    margin: 0;
-    background: #050505;
-    color: #ffd;
-    font-family: Arial, system-ui;
+  body { margin:0; background:#050505; color:#ffd; font-family:Arial,system-ui; }
+  .page{ display:flex; align-items:center; justify-content:center; min-height:100vh; padding:20px; }
+  .card{
+    width:100%; max-width:420px; background:#0d0d0d;
+    border:2px solid rgba(212,175,55,0.15); border-radius:18px;
+    padding:28px; box-shadow:0 6px 30px rgba(212,175,55,0.08);
   }
-  .page {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 20px;
+  h1{ font-family:'Titan One',cursive; text-align:center; color:#ffd700;
+      margin-bottom:20px; font-size:36px; }
+  label{ display:block; margin-top:14px; color:#e9d89a; font-size:15px; }
+  input{
+    width:100%; padding:12px; margin-top:6px; border-radius:10px;
+    border:1px solid rgba(212,175,55,0.15); background:#121212;
+    color:#ffd; font-size:16px;
   }
-  .card {
-    width: 100%;
-    max-width: 420px;
-    background: #0d0d0d;
-    border: 2px solid rgba(212,175,55,0.15);
-    border-radius: 18px;
-    padding: 28px;
-    box-shadow: 0 6px 30px rgba(212,175,55,0.08);
+  button{
+    margin-top:20px; padding:14px; width:100%; border-radius:12px; border:none;
+    font-size:17px; font-weight:700; cursor:pointer;
+    background:linear-gradient(120deg,#ffd700,#b8860b); color:#050505;
   }
-  h1 {
-    font-family: 'Titan One', cursive;
-    text-align: center;
-    color: #ffd700;
-    margin-bottom: 20px;
-    font-size: 36px;
+  .alert{
+    margin-top:15px; padding:12px; border-radius:10px; display:none;
+    text-align:center; font-size:14px;
   }
-  label {
-    display: block;
-    margin-top: 14px;
-    color: #e9d89a;
-    font-size: 15px;
-  }
-  input {
-    width: 100%;
-    padding: 12px;
-    margin-top: 6px;
-    border-radius: 10px;
-    border: 1px solid rgba(212,175,55,0.15);
-    background: #121212;
-    color: #ffd;
-    font-size: 16px;
-  }
-  button {
-    margin-top: 20px;
-    padding: 14px;
-    width: 100%;
-    border-radius: 12px;
-    border: none;
-    font-size: 17px;
-    font-weight: 700;
-    cursor: pointer;
-    background: linear-gradient(120deg,#ffd700,#b8860b);
-    color: #050505;
-  }
-  .alert {
-    margin-top: 15px;
-    padding: 12px;
-    border-radius: 10px;
-    display: none;
-    text-align: center;
-    font-size: 14px;
-  }
-  .bottomLink {
-    text-align: center;
-    margin-top: 18px;
-  }
-  .bottomLink a {
-    color: #ffd700;
-    text-decoration: none;
-    font-weight: bold;
-  }
+  .bottomLink{ text-align:center;margin-top:18px; }
+  .bottomLink a{ color:#ffd700; text-decoration:none; font-weight:bold; }
 </style>
 </head>
 <body>
