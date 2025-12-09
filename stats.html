@@ -144,15 +144,15 @@ onAuthStateChanged(auth, (user) => {
     document.getElementById("email").textContent = data.email || "";
 
     // Stats
-    const s = data.stats || {};
+    const s = data || {};
     document.getElementById("level").textContent = s.level ?? 0;
     document.getElementById("xp").textContent = s.xp ?? 0;
     document.getElementById("tokens").textContent = s.tokens ?? 0;
     document.getElementById("messagesSent").textContent = s.messagesSent ?? 0;
     document.getElementById("packsOpened").textContent = s.packsOpened ?? 0;
 
-    const unlocked = s.goldsUnlocked ?? 0;
-    const total = s.totalGolds ?? 0;
+    const unlocked = goldsUnlocked ?? 0;
+    const total = totalGolds ?? 0;
     document.getElementById("golds").textContent = `${unlocked}/${total}`;
 
     // Badges
