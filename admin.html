@@ -1,551 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Goldet — Admin Panel</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet" />
+<meta charset="UTF-8" />
+<title>Admin Panel</title>
 <style>
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0;height:100%;font-family:Arial,system-ui;background:linear-gradient(180deg,#050505,#0b0b0b);color:#fff}
-  /* Sidebar */
-  .sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;background: linear-gradient(180deg,#1a1200,#2e1a03);border-right: 2px solid rgba(212,175,55,0.06);padding:22px;display:flex;flex-direction:column;gap:12px}
-  .logo{font-family:'Titan One',cursive;color:#ffd700;font-size:34px;text-shadow:0 0 8px rgba(212,175,55,0.15)}
-  .nav a{display:block;color:#ffd;text-decoration:none;padding:10px;border-radius:8px;margin:6px 0;background:transparent}
-  .nav a:hover{background:rgba(212,175,55,0.06)}
-  /* Main */
-  .main{margin-left:260px;padding:30px;min-height:100vh}
-  h1{font-family:'Titan One',cursive;color:#ffdf80;margin:0 0 12px}
-  .profile-card{background:#0f0f0f;border:2px solid rgba(212,175,55,0.12);padding:18px;border-radius:12px;display:flex;gap:16px;align-items:center;box-shadow:0 6px 24px rgba(212,175,55,0.06)}
-  .avatar{width:96px;height:96px;border-radius:999px;background:linear-gradient(90deg,#ffd700,#b8860b);box-shadow:0 0 12px rgba(255,215,0,0.4)}
-  .profile-info{flex:1}
-  .username{font-family:'Titan One';font-size:28px;color:#ffd700;margin:0}
-  .small{color:#d9c08c}
-  .level-bar{height:12px;background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid rgba(212,175,55,0.12);margin-top:8px}
-  .bar-fill{height:100%;background:linear-gradient(90deg,#ffd700,#b8860b);width:0%}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:20px}
-  .stat-box{background:#0f0f0f;border:2px solid rgba(212,175,55,0.12);padding:14px;border-radius:12px;text-align:center;box-shadow:0 6px 24px rgba(212,175,55,0.04)}
-  .stat-title{color:#f6e6b4;margin-bottom:6px}
-  .stat-value{font-size:28px;color:#ffd700;font-weight:700}
-  .actions{display:flex;gap:10px;margin-top:12px}
-  .btn{padding:10px 12px;border-radius:10px;border:none;background:linear-gradient(90deg,#ffd700,#b8860b);color:#070707;font-weight:800;cursor:pointer}
-  .ghost{background:transparent;border:2px solid rgba(212,175,55,0.12);color:#ffd;padding:8px 10px;border-radius:10px}
-  .list{margin-top:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px}
-  .user-row{background:#111;border-radius:10px;padding:12px;border:1px solid rgba(212,175,55,0.06);display:flex;gap:12px;align-items:center}
-  .user-meta{flex:1}
-  .user-actions{display:flex;flex-direction:column;gap:8px}
-  .input, input[type=text], input[type=color], textarea { width:100%; padding:8px; border-radius:8px; border:1px solid rgba(212,175,55,0.06); background:#0f0f0f; color:#ffd; }
-  .alert{margin-top:12px;padding:10px;border-radius:8px;display:none}
-  .pending{background:#2b2b2b;border-left:4px solid #ffd700}
-  @media(max-width:900px){.main{margin-left:0;padding:16px}}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%;font-family:Arial,system-ui;background:linear-gradient(180deg,#050505,#0b0b0b);color:#fff}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;background: linear-gradient(180deg,#1a1200,#2e1a03);border-right: 2px solid rgba(212,175,55,0.06);padding:22px;display:flex;flex-direction:column;gap:12px}
+.logo{font-family:'Titan One',cursive;color:#ffd700;font-size:34px;text-shadow:0 0 8px rgba(212,175,55,0.15)}
+.nav a{display:block;color:#ffd;text-decoration:none;padding:10px;border-radius:8px;margin:6px 0;background:transparent}
+.nav a:hover{background:rgba(212,175,55,0.06)}
+.main{margin-left:260px;padding:30px;min-height:100vh}
+h1{font-family:'Titan One',cursive;color:#ffdf80;margin:0 0 12px}
+.user-card{background:#0f0f0f;border:2px solid rgba(212,175,55,0.12);padding:18px;border-radius:12px;margin-bottom:20px;box-shadow:0 6px 24px rgba(212,175,55,0.06)}
+.section-title{color:#ffd700;font-weight:700;margin-top:10px;margin-bottom:6px}
+input,select{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(212,175,55,0.18);background:#111;color:#fff;margin-bottom:6px}
+label{font-size:14px;color:#d9c08c}
+.save-btn{background:linear-gradient(90deg,#ffd700,#b8860b);color:#000;font-weight:700;padding:10px;border:none;border-radius:8px;margin-top:10px;width:100%;cursor:pointer}
+.badge{background:rgba(255,215,0,0.12);padding:4px 6px;border-radius:8px;color:#ffe;font-weight:700;display:inline-block;margin:4px 4px 0 0}
 </style>
 </head>
 <body>
 
+<!-- SIDEBAR -->
 <div class="sidebar">
-  <nav class="nav">
-   <div class="logo">Goldet</div>
+  <div class="logo">ADMIN</div>
   <div class="nav">
-    <a href="stats.html">📊 Stats</a>
-    <a href="chat.html">💬 Chat</a>
-    <a href="admin.html">🛠 Admin</a>
-    <a href="login.html">🚪 Logout</a>
+    <a href="admin.html">Dashboard</a>
+    <a href="stats.html">Stats</a>
+    <a href="chat.html">Chat</a>
   </div>
 </div>
 
-
+<!-- MAIN CONTENT -->
 <div class="main">
-  <div class="profile-card" id="adminPanelHeader">
-    <div class="avatar" id="adminAvatar"></div>
-    <div class="profile-info">
-      <div style="display:flex;align-items:center;gap:12px;justify-content:space-between">
-        <div>
-          <div class="username" id="adminName">Checking...</div>
-          <div class="small" id="adminEmailText"></div>
-        </div>
-        <div style="text-align:right">
-          <div class="small">ROLE</div>
-          <div class="small" id="adminRole">—</div>
-        </div>
-      </div>
-      <div class="level-bar"><div class="bar-fill" id="adminXP"></div></div>
-    </div>
-  </div>
+  <h1>Admin Panel</h1>
+  <div id="adminName" style="color:#ffd700;font-size:20px;margin-bottom:14px"></div>
 
-  <h1>Users — Manage & Edit</h1>
-  <div class="small">Real-time list of users. Edit fields inline and click Save. Approve pending signups below.</div>
-
-  <div style="margin-top:18px;">
-    <div style="display:flex;gap:12px;align-items:center">
-      <input id="filterInput" class="input" placeholder="Filter username..." />
-      <button id="refreshBtn" class="ghost">Refresh</button>
-    </div>
-  </div>
-
-  <div id="usersList" class="list" style="margin-top:14px">Loading users…</div>
-
-  <h2 style="margin-top:22px">Pending Signups</h2>
-  <div id="pendingList">Loading pending signups…</div>
-
-  <div id="adminAlert" class="alert"></div>
+  <div id="usersList"></div>
 </div>
 
+<!-- FIREBASE -->
 <script type="module">
-/* Admin panel:
-   - sign in (if not signed in) using Auth username -> username@goldet.internal
-   - verify admin by checking users/{uid}.isAdmin===true OR admin/{username}===true
-   - listen to /users real-time and render
-   - listen to /forms and /pendingUsers for pending signups
-   - allow edits and approve/decline
-*/
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { 
+  getAuth, 
+  onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import {
-  getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-import {
-  getDatabase, ref, onValue, get, set, update, remove, child
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
-
+// 🔥 INSERT YOUR FIREBASE CONFIG HERE
 const firebaseConfig = {
-  apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
-  authDomain: "goldet-504aa.firebaseapp.com",
-  databaseURL: "https://goldet-504aa-default-rtdb.firebaseio.com",
-  projectId: "goldet-504aa",
-  storageBucket: "goldet-504aa.appspot.com",
-  messagingSenderId: "36312610816",
-  appId: "1:36312610816:web:ded0576d78ebf1ceba00e5",
-  measurementId: "G-TTJNTC824V"
+  apiKey: "",
+  authDomain: "",
+  databaseURL: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: ""
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getDatabase(app);
+const auth = getAuth(app);
 
-// UI refs
-const usersListEl = document.getElementById('usersList');
-const pendingListEl = document.getElementById('pendingList');
-const adminNameEl = document.getElementById('adminName');
-const adminEmailText = document.getElementById('adminEmailText');
-const adminRoleEl = document.getElementById('adminRole');
-const adminAlert = document.getElementById('adminAlert');
-const adminXPBar = document.getElementById('adminXP');
-const signOutLink = document.getElementById('sign-out-link');
-const filterInput = document.getElementById('filterInput');
-const refreshBtn = document.getElementById('refreshBtn');
+let currentAdminUsername = "";
 
-function showAdminAlert(msg, ok=false){
-  adminAlert.style.display = 'block';
-  adminAlert.style.background = ok ? "rgba(40,180,40,0.12)" : "rgba(255,0,0,0.12)";
-  adminAlert.textContent = msg;
-  setTimeout(()=> adminAlert.style.display = 'none', 4000);
-}
+// AUTH + ADMIN VALIDATION
+onAuthStateChanged(auth, user => {
+  if (!user) return;
 
-// helper to build email from username
-function emailFor(username){ return `${username}@goldet.internal`; }
+  const uid = user.uid;
 
-// sign out
-signOutLink.onclick = async () => {
-  await signOut(auth);
-  location.reload();
-};
+  // get username from database
+  onValue(ref(db, "users/" + uid + "/username"), snap => {
+    currentAdminUsername = snap.val();
 
-// watch auth
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    renderAdminLoginForm();
-    return;
-  }
-  try {
-    const uid = user.uid;
-    // get /users/{uid}
-    const snap = await get(ref(db, `users/${uid}`));
-    const dbUser = snap.exists() ? snap.val() : null;
-    // get admin record by username mapping (fallback)
-    let username = dbUser && dbUser.username ? dbUser.username : null;
-
-    // check admin whitelist node: admin/{username}: true
-    let isAdmin = false;
-    if (username) {
-      const adminSnap = await get(ref(db, `admin/${username}`));
-      if (adminSnap.exists() && adminSnap.val() === true) isAdmin = true;
-    }
-    // or check users/{uid}.isAdmin or isAdmin flag in user object
-    if (dbUser && (dbUser.isAdmin === true || dbUser.admin === true || dbUser.role === 'admin')) isAdmin = true;
-
-    if (!isAdmin) {
-      // not admin — kick out
-      await signOut(auth);
-      alert("This account is not authorized as admin.");
-      renderAdminLoginForm();
-      return;
-    }
-
-    // show admin header info
-    adminNameEl.textContent = (dbUser && dbUser.username) ? dbUser.username : (username || 'Admin');
-    adminEmailText.textContent = user.email || '';
-    adminRoleEl.textContent = 'ADMIN';
-    const xp = dbUser && dbUser.stats && dbUser.stats.xp ? dbUser.stats.xp : 0;
-    adminXPBar.style.width = Math.min(100, xp) + '%';
-    // start listening for users & pending forms
-    startUsersListener();
-    startPendingListener();
-  } catch (e) {
-    console.error(e);
-    renderAdminLoginForm();
-  }
+    // check admin table
+    onValue(ref(db, "admin/" + currentAdminUsername), adminSnap => {
+      if (adminSnap.val() === true) {
+        document.getElementById("adminName").innerText =
+          "Logged in as Admin: " + currentAdminUsername;
+        loadUsers();
+      } else {
+        document.getElementById("adminName").innerText =
+          "ACCESS DENIED – You are not an admin.";
+      }
+    });
+  });
 });
 
-// Render a tiny login form in the header area if not signed in
-function renderAdminLoginForm(){
-  adminNameEl.textContent = "Sign in as admin";
-  adminEmailText.textContent = "Use admin username + password";
-  adminRoleEl.textContent = '';
-  // inject a small modal-like login box below header
-  const header = document.getElementById('adminPanelHeader');
-  // if a form already exists, don't add again
-  if (document.getElementById('adminTinyForm')) return;
-  const f = document.createElement('div');
-  f.id = 'adminTinyForm';
-  f.style.marginTop = '12px';
-  f.innerHTML = `
-    <div style="display:flex;gap:8px;align-items:center">
-      <input id="adminUserInput" placeholder="admin username" class="input" style="max-width:200px"/>
-      <input id="adminPassInput" placeholder="password" type="password" class="input" style="max-width:200px"/>
-      <button id="adminSignBtn" class="btn">Sign In</button>
-    </div>
-    <div style="margin-top:8px" class="small">If you don't have an admin account, create one in Firebase Auth and set <code>users/{UID}.isAdmin = true</code> or add the username under <code>admin/{username}: true</code>.</div>
-  `;
-  header.appendChild(f);
-  document.getElementById('adminSignBtn').onclick = async () => {
-    const u = document.getElementById('adminUserInput').value.trim();
-    const p = document.getElementById('adminPassInput').value;
-    if (!u || !p) return showAdminAlert('Enter admin username and password.');
-    try {
-      const email = emailFor(u);
-      await signInWithEmailAndPassword(auth, email, p);
-      showAdminAlert('Signed in — verifying...', true);
-      // remove tiny form on success (onAuthStateChanged will update)
-      const el = document.getElementById('adminTinyForm'); if (el) el.remove();
-    } catch (err) {
-      console.error(err);
-      showAdminAlert('Sign in failed: ' + (err.message || err));
+
+// LOAD ALL USERS
+function loadUsers() {
+  onValue(ref(db, "users"), snap => {
+    const users = snap.val();
+    const list = document.getElementById("usersList");
+    list.innerHTML = "";
+
+    Object.entries(users).forEach(([uid, u]) => {
+      let card = document.createElement("div");
+      card.className = "user-card";
+      card.innerHTML = `
+        <h2 style="color:${u.chatColor?.name || "#ffd700"}">
+          ${u.username}
+        </h2>
+
+        <label>Username</label>
+        <input id="u-${uid}-username" value="${u.username || ""}">
+
+        <label>Name Color</label>
+        <input id="u-${uid}-chatColorName" value="${u.chatColor?.name || "#fff"}">
+
+        <label>Text Color</label>
+        <input id="u-${uid}-chatColorText" value="${u.chatColor?.text || "#fff"}">
+
+        <label>Messages Sent</label>
+        <input id="u-${uid}-messages" value="${u.stats?.messagesSent || 0}">
+
+        <label>Packs Opened</label>
+        <input id="u-${uid}-packs" value="${u.stats?.packsOpened || 0}">
+
+        <label>Golds Unlocked</label>
+        <input id="u-${uid}-goldsUnlocked" value="${u.stats?.golds || ""}">
+
+        <label>Is Admin</label>
+        <select id="u-${uid}-isAdmin">
+          <option value="true" ${u.isAdmin ? "selected" : ""}>Yes</option>
+          <option value="false" ${!u.isAdmin ? "selected" : ""}>No</option>
+        </select>
+
+        <label>Approved</label>
+        <select id="u-${uid}-approved">
+          <option value="true" ${u.approved ? "selected" : ""}>Yes</option>
+          <option value="false" ${!u.approved ? "selected" : ""}>No</option>
+        </select>
+
+        <button class="save-btn" onclick="saveUser('${uid}')">Save Changes</button>
+      `;
+      list.appendChild(card);
+    });
+  });
+}
+
+
+// SAVE USER
+window.saveUser = function(uid) {
+  const data = {
+    username: document.getElementById(`u-${uid}-username`).value,
+    chatColor: {
+      name: document.getElementById(`u-${uid}-chatColorName`).value,
+      text: document.getElementById(`u-${uid}-chatColorText`).value,
+    },
+    isAdmin: document.getElementById(`u-${uid}-isAdmin`).value === "true",
+    approved: document.getElementById(`u-${uid}-approved`).value === "true",
+    stats: {
+      messagesSent: Number(document.getElementById(`u-${uid}-messages`).value),
+      packsOpened: Number(document.getElementById(`u-${uid}-packs`).value),
+      golds: document.getElementById(`u-${uid}-goldsUnlocked`).value
     }
   };
-}
 
-// --- USERS LISTENER & RENDER ---
-let usersListenerUnsub = null;
-function startUsersListener(){
-  const usersRef = ref(db, 'users');
-  // attach onValue
-  onValue(usersRef, (snap) => {
-    const data = snap.val() || {};
-    renderUsersList(data);
-  });
-}
+  update(ref(db, "users/" + uid), data);
 
-function renderUsersList(usersObj){
-  const filter = (filterInput.value || '').toLowerCase();
-  usersListEl.innerHTML = '';
-  const entries = Object.entries(usersObj).sort((a,b)=> {
-    const au = a[1].username || ''; const bu = b[1].username || '';
-    return au.localeCompare(bu);
-  });
-  for (const [uid, u] of entries){
-    if (!u) continue;
-    const uname = (u.username || '').toLowerCase();
-    if (filter && !uname.includes(filter)) continue;
-    const row = document.createElement('div');
-    row.className = 'user-row';
-    row.dataset.uid = uid;
-    row.innerHTML = `
-      <div style="width:120px">
-        <div style="font-weight:800;color:#ffd700">${escapeHtml(u.username||uid)}</div>
-        <div class="small">${escapeHtml(u.email || '')}</div>
-        <div style="margin-top:8px"><span class="badge">${u.isAdmin ? 'ADMIN' : 'USER'}</span></div>
-      </div>
-      <div class="user-meta">
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
-          <div>
-            <label class="small">Level</label>
-            <input type="text" data-field="stats.level" class="input" value="${escapeHtml((u.stats && u.stats.level) || '')}" />
-          </div>
-          <div>
-            <label class="small">XP</label>
-            <input type="text" data-field="stats.xp" class="input" value="${escapeHtml((u.stats && u.stats.xp) || '')}" />
-          </div>
-          <div>
-            <label class="small">Packs Opened</label>
-            <input type="text" data-field="stats.packsOpened" class="input" value="${escapeHtml((u.stats && u.stats.packsOpened) || '')}" />
-          </div>
-        </div>
-
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px">
-          <div>
-            <label class="small">Messages Sent</label>
-            <input type="text" data-field="stats.messagesSent" class="input" value="${escapeHtml((u.stats && u.stats.messagesSent) || '')}" />
-          </div>
-          <div>
-            <label class="small">Golds Unlocked</label>
-            <input type="text" data-field="stats.goldsUnlocked" class="input" value="${escapeHtml((u.stats && u.stats.goldsUnlocked) || '')}" />
-          </div>
-          <div>
-            <label class="small">Total Golds</label>
-            <input type="text" data-field="stats.totalGolds" class="input" value="${escapeHtml((u.stats && u.stats.totalGolds) || '')}" />
-          </div>
-        </div>
-
-        <div style="display:flex;gap:8px;margin-top:8px">
-          <div style="flex:1">
-            <label class="small">Badges (comma-separated)</label>
-            <input type="text" data-field="badges" class="input" value="${escapeHtml(Array.isArray(u.badges) ? u.badges.join(',') : (typeof u.badges === 'string' ? u.badges : ''))}" />
-          </div>
-          <div style="width:180px">
-            <label class="small">Chat Name Color</label>
-            <input type="color" data-field="chatColor.name" class="input" value="${escapeHtml((u.chatColor && u.chatColor.name) || '#ffffff')}" />
-            <label class="small" style="margin-top:6px">Chat Text Color</label>
-            <input type="color" data-field="chatColor.text" class="input" value="${escapeHtml((u.chatColor && u.chatColor.text) || '#000000')}" />
-          </div>
-        </div>
-      </div>
-
-      <div class="user-actions">
-        <label class="small">Admin</label>
-        <select data-field="isAdmin" class="input">
-          <option value="false"${u.isAdmin ? '' : ' selected'}>No</option>
-          <option value="true"${u.isAdmin ? ' selected' : ''}>Yes</option>
-        </select>
-        <button class="btn saveBtn">Save</button>
-        <button class="ghost deleteBtn">Delete User</button>
-      </div>
-    `;
-    usersListEl.appendChild(row);
-
-    // wire up save
-    const saveBtn = row.querySelector('.saveBtn');
-    saveBtn.onclick = async () => {
-      try {
-        const updates = {};
-        // collect all inputs with data-field
-        row.querySelectorAll('[data-field]').forEach(el => {
-          const path = el.getAttribute('data-field');
-          let val = el.value;
-          // if checkbox/select representing boolean
-          if (path === 'isAdmin'){
-            val = (val === 'true');
-            updates[path] = val;
-            return;
-          }
-          // numeric fields: try parse
-          if (/^stats\./.test(path)){
-            const num = Number(val);
-            updates[path] = isNaN(num) ? val : num;
-            return;
-          }
-          // badges: split
-          if (path === 'badges'){
-            if (val.trim() === '') updates[path] = [];
-            else updates[path] = val.split(',').map(s=>s.trim()).filter(Boolean);
-            return;
-          }
-          // chatColor nested
-          if (/^chatColor\./.test(path)){
-            // will handle below by merging
-            updates[path] = val;
-            return;
-          }
-          updates[path] = val;
-        });
-
-        // build nested update object for update(ref,...)
-        const flatToNested = {};
-        for (const k in updates){
-          const parts = k.split('.');
-          let dest = flatToNested;
-          for (let i=0;i<parts.length;i++){
-            const p = parts[i];
-            if (i === parts.length-1) { dest[p] = updates[k]; }
-            else { dest[p] = dest[p] || {}; dest = dest[p]; }
-          }
-        }
-
-        await update(ref(db, `users/${uid}`), flatToNested);
-        showAdminAlert('Saved ' + (u.username || uid), true);
-      } catch (e) {
-        console.error(e);
-        showAdminAlert('Save failed: ' + (e.message || e));
-      }
-    };
-
-    // delete user (dangerous)
-    const deleteBtn = row.querySelector('.deleteBtn');
-    deleteBtn.onclick = async () => {
-      if (!confirm('Delete user ' + (u.username||uid) + ' from Realtime DB? This does not delete Auth account.')) return;
-      try {
-        await remove(ref(db, `users/${uid}`));
-        // optionally remove username mapping if exists
-        if (u.username) await remove(ref(db, `usernames/${u.username}`));
-        showAdminAlert('Deleted ' + (u.username||uid), true);
-      } catch (e) {
-        console.error(e);
-        showAdminAlert('Delete failed: ' + (e.message || e));
-      }
-    };
+  // also update admin list
+  if (data.isAdmin) {
+    update(ref(db, "admin/" + data.username), true);
+  } else {
+    update(ref(db, "admin/" + data.username), null);
   }
-}
 
-// --- PENDING FORMS ---
-function startPendingListener(){
-  // forms (by uid) and pendingUsers (legacy)
-  const formsRef = ref(db, 'forms');
-  onValue(formsRef, (snap) => {
-    renderPendingListFromObj(snap.val() || {});
-  });
-  const pendingRef = ref(db, 'pendingUsers');
-  onValue(pendingRef, (snap) => {
-    renderPendingListFromObj(snap.val() || {}, true);
-  });
-}
-
-// Render pending list given object; isLegacy flag used for display
-function renderPendingListFromObj(obj, isLegacy=false){
-  // combine the two sources by merging into array
-  // obj is map uid->form
-  const entries = Object.entries(obj || {});
-  // render as cards
-  // We will show combined from both listeners: to avoid duplication, we'll fetch both on each onValue and merge, but simplest: append both into same container and filter duplicates by uid.
-  // For simple behavior, just rebuild using both nodes by reading both now:
-  (async () => {
-    const formsSnap = await get(ref(db, 'forms'));
-    const pendingSnap = await get(ref(db, 'pendingUsers'));
-    const forms = formsSnap.exists() ? formsSnap.val() : {};
-    const pending = pendingSnap.exists() ? pendingSnap.val() : {};
-    // combine keys
-    const combined = { ...forms, ...pending };
-    pendingListEl.innerHTML = '';
-    let found = 0;
-    for (const uid in combined){
-      const f = combined[uid];
-      if (!f) continue;
-      // show only pending
-      if (f.status && f.status !== 'pending') continue;
-      found++;
-      const div = document.createElement('div');
-      div.className = 'request' + (f.username ? '' : '');
-      div.style.marginBottom = '10px';
-      div.innerHTML = `
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <div style="font-weight:800;color:#ffd700">${escapeHtml(f.username || uid)}</div>
-            <div class="small">Age: ${escapeHtml(f.age||'—')} — Discord: ${escapeHtml(f.discord||'—')}</div>
-            <div style="margin-top:8px">${escapeHtml(f.whyPlay||'')}</div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <button class="btn" data-uid="${uid}">Approve</button>
-            <button class="ghost" data-uid="${uid}">Decline</button>
-          </div>
-        </div>
-      `;
-      pendingListEl.appendChild(div);
-
-      // wire approve/decline
-      div.querySelector('.btn').onclick = async () => {
-        await approvePending(uid);
-      };
-      div.querySelector('.ghost').onclick = async () => {
-        await declinePending(uid);
-      };
-    }
-    if (!found) pendingListEl.innerHTML = '<div class="small">No pending requests.</div>';
-  })();
-}
-
-// Approve handler
-async function approvePending(uid){
-  try {
-    const fSnap = await get(ref(db, `forms/${uid}`));
-    let f = null;
-    if (fSnap.exists()) f = fSnap.val();
-    else {
-      const pSnap = await get(ref(db, `pendingUsers/${uid}`));
-      if (pSnap.exists()) f = pSnap.val();
-    }
-    if (!f) return showAdminAlert('Form not found');
-    // create /users/{uid} if missing
-    const userSnap = await get(ref(db, `users/${uid}`));
-    if (!userSnap.exists()){
-      const starter = {
-        username: f.username || ('user' + Math.floor(Math.random()*10000)),
-        email: f.email || '',
-        isAdmin: false,
-        stats: {
-          level: 1,
-          xp: 0,
-          packsOpened: 0,
-          messagesSent: 0,
-          goldsUnlocked: 0,
-          totalGolds: 0
-        },
-        badges: [],
-        chatColor: {
-          name: "#ffffff",
-          text: "#000000"
-        },
-        createdAt: Date.now(),
-        approved: true
-      };
-      await set(ref(db, `users/${uid}`), starter);
-    } else {
-      // mark approved flag if present
-      await update(ref(db, `users/${uid}`), { approved: true });
-    }
-    // mark form status
-    await update(ref(db, `forms/${uid}`), { status: 'approved' }).catch(()=>{});
-    await update(ref(db, `pendingUsers/${uid}`), { status: 'approved' }).catch(()=>{});
-    showAdminAlert('Approved ' + (f.username || uid), true);
-  } catch (e) {
-    console.error(e);
-    showAdminAlert('Approve failed: ' + (e.message||e));
-  }
-}
-
-// Decline handler
-async function declinePending(uid){
-  try {
-    // mark declined
-    await update(ref(db, `forms/${uid}`), { status: 'declined' }).catch(()=>{});
-    await update(ref(db, `pendingUsers/${uid}`), { status: 'declined' }).catch(()=>{});
-    // try remove usernames mapping if possible
-    const fSnap = await get(ref(db, `forms/${uid}`));
-    const f = fSnap.exists() ? fSnap.val() : null;
-    if (f && f.username) await remove(ref(db, `usernames/${f.username}`)).catch(()=>{});
-    showAdminAlert('Declined ' + (f && f.username ? f.username : uid));
-  } catch (e) {
-    console.error(e);
-    showAdminAlert('Decline failed: ' + (e.message||e));
-  }
-}
-
-// refresh / filter wiring
-refreshBtn.onclick = () => {
-  // the listeners are live, but allow force re-get
-  startUsersListener();
-  startPendingListener();
+  alert("Saved!");
 };
-
-filterInput.oninput = () => {
-  // re-rendering happens via live listener; but we can simply refetch snapshot
-  get(ref(db, 'users')).then(snap=> {
-    renderUsersList(snap.exists() ? snap.val() : {});
-  });
-};
-
-// small helper
-function escapeHtml(s){ return String(s === null || s === undefined ? '' : s)
-  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-  .replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 </script>
 </body>
 </html>
