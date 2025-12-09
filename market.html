@@ -8,34 +8,80 @@
 
 <style>
   *{box-sizing:border-box}
-  html,body{margin:0;padding:0;height:100%;font-family:Arial,system-ui;background:#080808;color:#fff}
+  html,body{
+    margin:0;padding:0;height:100%;
+    font-family:Arial,system-ui;
+    background:linear-gradient(#050505,#0a0a0a);
+    color:#fff;
+  }
 
-  .sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;
-    background: linear-gradient(180deg,#1a1200,#2e1a03);
+  /* SIDEBAR */
+  .sidebar{
+    position:fixed;left:0;top:0;bottom:0;width:240px;
+    background:linear-gradient(180deg,#1a1200,#2e1a03);
     border-right:2px solid rgba(212,175,55,0.06);
-    padding:22px;display:flex;flex-direction:column;gap:12px}
-  .sidebar a{color:#ffd;text-decoration:none;padding:10px;border-radius:8px}
-  .sidebar a:hover{background:rgba(212,175,55,0.08)}
-  .logo{font-family:'Titan One';font-size:34px;color:#ffd700}
+    padding:22px;display:flex;flex-direction:column;gap:12px;
+  }
+  .sidebar a{
+    color:#ffd;text-decoration:none;padding:10px;border-radius:8px;
+  }
+  .sidebar a:hover{
+    background:rgba(212,175,55,0.08);
+  }
+  .logo{
+    font-family:'Titan One';font-size:34px;color:#ffd700;
+    text-shadow:0 0 8px rgba(212,175,55,0.15);
+  }
 
-  .main{margin-left:260px;padding:26px}
-  h1{font-family:'Titan One';color:#ffd700}
+  /* MAIN */
+  .main{
+    margin-left:260px;
+    padding:32px;
+    min-height:100vh;
+  }
+  h1{
+    font-family:'Titan One';
+    color:#ffd700;
+    font-size:38px;
+    margin:10px 0 20px;
+  }
 
-  .pack-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:20px}
+  /* PACKS */
+  .pack-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:20px;
+    max-width:1200px;
+  }
   .pack-card{
-    background:#111;border:2px solid rgba(212,175,55,0.12);
-    border-radius:14px;padding:18px;box-shadow:0 6px 20px rgba(212,175,55,0.08)
+    background:#111;
+    border:2px solid rgba(212,175,55,0.15);
+    border-radius:14px;
+    padding:18px;
+    box-shadow:0 6px 20px rgba(212,175,55,0.08);
   }
   .pack-title{font-size:22px;font-weight:700;color:#ffd}
-  .pack-desc{font-size:14px;color:#d9c08c;margin-top:6px}
-  .pack-cost{margin-top:10px;font-size:18px;color:#ffd700;font-weight:800}
+  .pack-desc{font-size:14px;color:#e2d2a2;margin-top:6px;}
+  .pack-cost{
+    margin-top:10px;font-size:18px;
+    color:#ffd700;font-weight:900;
+  }
   .btn-buy{
-    margin-top:14px;padding:10px;width:100%;font-weight:900;
+    margin-top:14px;padding:11px;width:100%;
     border:none;border-radius:10px;cursor:pointer;
-    background:linear-gradient(90deg,#ffd700,#b8860b);color:#000
+    background:linear-gradient(90deg,#ffd700,#b8860b);
+    color:#000;font-weight:900;font-size:15px;
   }
 
-  .alert{margin-top:14px;display:none;padding:10px;border-radius:10px}
+  /* ALERT */
+  #alert{
+    margin-top:15px;
+    padding:12px;
+    border-radius:8px;
+    display:none;
+    font-weight:bold;
+    max-width:600px;
+  }
 </style>
 </head>
 <body>
@@ -49,6 +95,7 @@
   <a href="golds.html">Golds</a>
   <a href="admin.html">Admin</a>
   <a href="settings.html">Settings</a>
+
   <div style="margin-top:auto">
     <div style="color:#d9c08c;font-size:13px">Signed in as</div>
     <div id="sidebarUser" style="font-weight:700;color:#ffd700">—</div>
@@ -58,8 +105,7 @@
 <div class="main">
   <h1>Market</h1>
 
-  <div id="alert" class="alert"></div>
-
+  <div id="alert"></div>
   <div id="packs" class="pack-grid"></div>
 </div>
 
@@ -67,7 +113,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-import { getDatabase, ref, onValue, get, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+import { getDatabase, ref, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDe9lhPW1DEli3moVwtywCE0ucXKoZSoXs",
@@ -76,94 +122,83 @@ const firebaseConfig = {
   projectId: "goldet-504aa",
   storageBucket: "goldet-504aa.appspot.com",
   messagingSenderId: "36312610816",
-  appId: "1:36312610816:web:ded0576d78ebf1ceba00e5",
-  measurementId: "G-TTJNTC824V"
+  appId: "1:36312610816:web:ded0576d78ebf1ceba00e5"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
+let uid = null;
+let userData = null;
+
 const packsDiv = document.getElementById("packs");
 const alertBox = document.getElementById("alert");
 const sidebarUser = document.getElementById("sidebarUser");
 
-let uid = null;
-let userData = null;
-
-function showAlert(msg, ok=false){
+function showAlert(msg, success=false) {
   alertBox.style.display = "block";
-  alertBox.style.background = ok ? "rgba(40,180,40,0.14)" : "rgba(255,0,0,0.14)";
+  alertBox.style.background = success ? "rgba(0,255,0,0.12)" : "rgba(255,0,0,0.12)";
   alertBox.textContent = msg;
-  setTimeout(()=> alertBox.style.display="none", 4000);
+  setTimeout(() => alertBox.style.display = "none", 3500);
 }
 
-onAuthStateChanged(auth, async(user)=>{
-  if(!user){
-    window.location.href = "login.html";
-    return;
-  }
+onAuthStateChanged(auth, async (user) => {
+  if (!user) return location.href = "login.html";
   uid = user.uid;
   sidebarUser.textContent = user.email;
 
-  const userRef = ref(db, "users/" + uid);
-  onValue(userRef, snap => {
+  onValue(ref(db, "users/" + uid), snap => {
     userData = snap.val() || {};
   });
 
   loadPacks();
 });
 
-function loadPacks(){
-  const refPacks = ref(db, "marketPacks");
-  onValue(refPacks, snap => {
+function loadPacks() {
+  onValue(ref(db, "marketPacks"), snap => {
     packsDiv.innerHTML = "";
     const packs = snap.val() || {};
-    Object.keys(packs).forEach(id => {
-      const p = packs[id];
 
+    Object.entries(packs).forEach(([id, pack]) => {
       const card = document.createElement("div");
       card.className = "pack-card";
       card.innerHTML = `
-        <div class="pack-title">${p.name}</div>
-        <div class="pack-desc">${p.description}</div>
-        <div class="pack-cost">Cost: ${p.cost} Gold</div>
+        <div class="pack-title">${pack.name}</div>
+        <div class="pack-desc">${pack.description}</div>
+        <div class="pack-cost">Cost: ${pack.cost} Gold</div>
         <button class="btn-buy">Buy Pack</button>
       `;
 
-      const btn = card.querySelector(".btn-buy");
-      btn.onclick = ()=> buyPack(id, p);
-
+      card.querySelector(".btn-buy").onclick = () => buyPack(id, pack);
       packsDiv.appendChild(card);
     });
   });
 }
 
-async function buyPack(id, pack){
-  if(!userData) return;
+async function buyPack(id, pack) {
+  if (!userData) return;
 
   const tokens = userData.tokens || 0;
-  if(tokens < pack.cost){
-    return showAlert("Not enough gold.");
-  }
+  if (tokens < pack.cost) return showAlert("Not enough gold.");
 
-  // subtract tokens
   const newTokens = tokens - pack.cost;
 
-  // determine amount of items
+  // #1: random items
   const count = Math.floor(
     Math.random() * (pack.maxItems - pack.minItems + 1)
   ) + pack.minItems;
 
   const poolKeys = Object.keys(pack.goldPool);
   const userGolds = userData.stats?.golds || {};
-  let unlocked = userData.goldsUnlocked || 0;
+  let unlocked = userData.goldsUnlocked || Object.keys(userGolds).length;
 
-  for(let i=0;i<count;i++){
-    const pick = poolKeys[Math.floor(Math.random()*poolKeys.length)];
-    const g = pack.goldPool[pick];
-    const newId = "gold_" + Date.now() + "_" + i;
-    userGolds[newId] = {
+  for (let i = 0; i < count; i++) {
+    const pickKey = poolKeys[Math.floor(Math.random() * poolKeys.length)];
+    const g = pack.goldPool[pickKey];
+    const goldId = "gold_" + Date.now() + "_" + i;
+
+    userGolds[goldId] = {
       name: g.name,
       rarity: g.rarity,
       obtainedAt: Date.now()
@@ -171,11 +206,12 @@ async function buyPack(id, pack){
     unlocked++;
   }
 
+  // #2: save back to Firebase
   await update(ref(db, "users/" + uid), {
     tokens: newTokens,
-    packsOpened: (userData.packsOpened||0) + 1,
+    packsOpened: (userData.packsOpened || 0) + 1,
     goldsUnlocked: unlocked,
-    ["stats/golds"]: userGolds
+    "stats/golds": userGolds
   });
 
   showAlert(`You opened ${pack.name} and received ${count} items!`, true);
